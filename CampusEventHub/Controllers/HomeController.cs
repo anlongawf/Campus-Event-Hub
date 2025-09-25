@@ -1,21 +1,53 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using CampusEventHub.Models;
+using CampusEventHub.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace CampusEventHub.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
+    private readonly ApplicationDbContext _context;
+    public HomeController(ApplicationDbContext context) 
     {
-        _logger = logger;
+        _context = context;
     }
 
     public IActionResult Index()
     {
-        return View();
+        var userId= HttpContext.Session.GetString("UserId");
+        string username = "Khách";
+
+        if (userId == null)
+        {
+            ViewBag.UserName = "Khách";
+        }
+        else
+        {
+            var user = _context.Users.FirstOrDefault(u => u.UserId == userId);
+            if (user != null)
+            {
+                username = user.UserName ?? "Người dùng";
+            }
+            ViewBag.UserName = username;
+        }
+        
+        var events = _context.Events.ToList();
+        
+        return View(events);
+    }
+
+    public IActionResult Events(int id)
+    {
+        var ev = _context.Events.FirstOrDefault(e => e.EventId == id);
+
+        if (ev == null)
+        {
+            return NotFound();
+        }
+
+        return View(ev);
     }
 
     public IActionResult Privacy()

@@ -1,0 +1,31 @@
+@model CampusEventHub.Models.Event
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>@Model.EventName</title>
+</head>
+<body>
+<div>
+    <div class="container row">
+        <img src="@Model.ImageUrl" class="card-img-top" alt="@Model.EventName" style="height:300px; object-fit:cover;" />
+        <div class="card shadow-sm">
+            <div class="card-body col-md-8">
+                <h3 class="card-title">@Model.EventName</h3>
+                <p class="card-text">@Model.Description</p>
+            </div>
+            <div class="col-md-4">
+                <p><i class="bi bi-geo-alt"></i> <strong>Địa điểm:</strong> @Model.Location</p>
+                <p><i class="bi bi-calendar-event"></i> <strong>Ngày:</strong> @Model.EventDate.ToString("dd/MM/yyyy")</p>
+                <p><i class="bi bi-award"></i> <strong>Điểm rèn luyện:</strong> @Model.TrainningPoint</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

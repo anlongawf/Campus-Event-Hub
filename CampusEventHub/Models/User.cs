@@ -13,6 +13,7 @@ public class User
     
     public int TrainningPoint { get; set; } = 0;
     
+    public bool isAdmin { get; set; } = false;
     public bool IsVerified  { get; set; } = false;
     
     public DateTime RegistrationDate { get; set; } = DateTime.Now;

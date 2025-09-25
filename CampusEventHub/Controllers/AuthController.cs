@@ -41,9 +41,14 @@ public class AuthController : Controller
         
         var user = _context.Users.SingleOrDefault(u => u.Email == model.Email);
 
+
         if (user != null && user.Password == model.Password)
         {
+            HttpContext.Session.SetString("UserId", user.UserId.ToString());
+            ViewBag.UserName = user.UserName;
             TempData["Success"] = "Đăng nhập thành công!";
+            var checkUserId = HttpContext.Session.GetString("UserId");
+            Console.WriteLine("UserId after set: " + checkUserId);
             return RedirectToAction("Index", "Home");
         }
         else
