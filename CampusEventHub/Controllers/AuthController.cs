@@ -3,6 +3,8 @@ using CampusEventHub.Models;
 using CampusEventHub.Data;
 using CampusEventHub.Service;
 using CampusEventHub.DTO;
+using CampusEventHub.Helpers;
+using CampusEventHub.Service;
 
 namespace CampusEventHub.Controllers;
 
@@ -40,15 +42,13 @@ public class AuthController : Controller
         }
         
         var user = _context.Users.SingleOrDefault(u => u.Email == model.Email);
-
-
-        if (user != null && user.Password == model.Password)
+        
+        if (user != null && PasswordHelper.VerifyPassword(model.Password, user.Password))
         {
             HttpContext.Session.SetString("UserId", user.UserId.ToString());
             ViewBag.UserName = user.UserName;
             TempData["Success"] = "Đăng nhập thành công!";
-            var checkUserId = HttpContext.Session.GetString("UserId");
-            Console.WriteLine("UserId after set: " + checkUserId);
+            
             return RedirectToAction("Index", "Home");
         }
         else
@@ -81,6 +81,8 @@ public class AuthController : Controller
         }
         
         string verificationCode = _mailService.GenerateVerificationCode();
+        
+        user.Password = PasswordHelper.HashPassword(user.Password);
         
         user.IsVerified = false;
         
