@@ -5,8 +5,11 @@ using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CampusEventHub") ?? throw new InvalidOperationException("Connection string 'MvcMovieContext' not found.")));
+
+builder.Services.AddScoped<SeatService>();
 
 builder.Services.AddControllersWithViews();
 

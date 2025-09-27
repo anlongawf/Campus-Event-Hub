@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "OvsKeiOWp/w=",
+  "dgSpecHash": "yvWfz0fGBEY=",
   "success": true,
-  "projectFilePath": "/Users/anphan/Desktop/Study/PhatTrienUngDungWeb1/CampusEventHub/CampusEventHub.csproj",
+  "projectFilePath": "/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/CampusEventHub.csproj",
   "expectedPackageFiles": [
     "/Users/anphan/.nuget/packages/azure.core/1.38.0/azure.core.1.38.0.nupkg.sha512",
     "/Users/anphan/.nuget/packages/azure.identity/1.11.4/azure.identity.1.11.4.nupkg.sha512",

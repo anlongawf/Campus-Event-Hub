@@ -1,16 +1,56 @@
-@page
-@model CampusEventHub.Views.Home.Index
-
+@model CampusEventHub.Models.Event
 
 <!DOCTYPE html>
-
 <html>
 <head>
-    <title></title>
+    <title>Tạo Event</title>
 </head>
 <body>
 <div>
-    <h1>admin</h1>
+    <h1>Admin - Tạo sự kiện</h1>
+
+    <form asp-action="CreateEvent" asp-controller="Admin" method="post">
+        <div>
+            <label asp-for="EventName"></label>
+            <input asp-for="EventName" placeholder="Tên sự kiện" />
+            <span asp-validation-for="EventName"></span>
+        </div>
+
+        <div>
+            <label asp-for="Description"></label>
+            <input asp-for="Description" placeholder="Mô tả" />
+        </div>
+
+        <div>
+            <label asp-for="Location"></label>
+            <input asp-for="Location" placeholder="Địa điểm" />
+        </div>
+
+        <div>
+            <label asp-for="EventDate"></label>
+            <input asp-for="EventDate" type="date" />
+            <span asp-validation-for="EventDate"></span>
+        </div>
+
+        <!-- Nhập URL ảnh -->
+        <div>
+            <label asp-for="ImageUrl"></label>
+            <input asp-for="ImageUrl" placeholder="https://example.com/image.jpg" />
+            <span asp-validation-for="ImageUrl"></span>
+        </div>
+
+        <!-- Chọn loại phạm vi -->
+        <div>
+            <label>Phạm vi ghế</label>
+            <select name="type">
+                <option value="class">Lớp nhỏ (A-B)</option>
+                <option value="course">Khoa nhỏ (A-D)</option>
+                <option value="department">Toàn khoa (A-F)</option>
+            </select>
+        </div>
+
+        <button type="submit">Tạo Event</button>
+    </form>
 </div>
 </body>
 </html>

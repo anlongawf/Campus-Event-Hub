@@ -30,11 +30,7 @@ namespace CampusEventHub.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EventId"));
 
-                    b.Property<int>("Capacity")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("EventDate")
@@ -45,22 +41,15 @@ namespace CampusEventHub.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Location")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SeatId")
-                        .HasColumnType("int");
 
                     b.Property<int>("TrainningPoint")
                         .HasColumnType("int");
 
                     b.HasKey("EventId");
-
-                    b.HasIndex("SeatId");
 
                     b.ToTable("Events");
                 });
@@ -73,6 +62,9 @@ namespace CampusEventHub.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SeatId"));
 
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Row")
                         .IsRequired()
                         .HasColumnType("nvarchar(1)");
@@ -80,7 +72,12 @@ namespace CampusEventHub.Migrations
                     b.Property<int>("SeatNumber")
                         .HasColumnType("int");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.HasKey("SeatId");
+
+                    b.HasIndex("EventId");
 
                     b.ToTable("Seats");
                 });
@@ -117,20 +114,20 @@ namespace CampusEventHub.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("CampusEventHub.Models.Event", b =>
+            modelBuilder.Entity("CampusEventHub.Models.Seat", b =>
                 {
-                    b.HasOne("CampusEventHub.Models.Seat", "Seat")
-                        .WithMany("Events")
-                        .HasForeignKey("SeatId")
+                    b.HasOne("CampusEventHub.Models.Event", "Event")
+                        .WithMany("Seats")
+                        .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Seat");
+                    b.Navigation("Event");
                 });
 
-            modelBuilder.Entity("CampusEventHub.Models.Seat", b =>
+            modelBuilder.Entity("CampusEventHub.Models.Event", b =>
                 {
-                    b.Navigation("Events");
+                    b.Navigation("Seats");
                 });
 #pragma warning restore 612, 618
         }
