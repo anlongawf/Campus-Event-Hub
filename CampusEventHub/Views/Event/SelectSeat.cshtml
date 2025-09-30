@@ -1,0 +1,180 @@
+@model CampusEventHub.Models.Event
+
+@{
+    ViewData["Title"] = "Chọn ghế - " + Model.EventName;
+    var seatsByRow = Model.Seats.GroupBy(s => s.Row).OrderBy(g => g.Key);
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h3 class="mb-3">@Model.EventName</h3>
+            <p class="text-muted">@Model.EventDate.ToString("dd/MM/yyyy HH:mm") - @Model.Location</p>
+
+            <!-- Chú thích -->
+            <div class="mb-4 p-3 border rounded bg-light">
+                <h5>Chú thích:</h5>
+                <div class="d-flex gap-4">
+                    <div>
+                        <span class="seat-legend seat-available"></span>
+                        <small>Còn trống</small>
+                    </div>
+                    <div>
+                        <span class="seat-legend seat-booked"></span>
+                        <small>Đã đặt</small>
+                    </div>
+                    <div>
+                        <span class="seat-legend seat-reserved"></span>
+                        <small>Khóa bởi Khoa</small>
+                    </div>
+                    <div>
+                        <span class="seat-legend seat-selected"></span>
+                        <small>Đang chọn</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Màn hình -->
+            <div class="text-center mb-4">
+                <div class="screen">STAGE / SCREEN</div>
+            </div>
+
+            <!-- Sơ đồ ghế -->
+            <div class="seat-map">
+                @foreach (var rowGroup in seatsByRow)
+                {
+                    <div class="seat-row">
+                        <div class="row-label">@rowGroup.Key</div>
+                        <div class="seats-container">
+                            @foreach (var seat in rowGroup.OrderBy(s => s.SeatNumber))
+                            {
+                                var statusClass = seat.Status switch
+                                {
+                                    SeatStatus.Available => "seat-available",
+                                    SeatStatus.Booked => "seat-booked",
+                                    SeatStatus.Reserved => "seat-reserved",
+                                    _ => "seat-available"
+                                };
+
+                                <div class="seat @statusClass"
+                                     data-seat-id="@seat.SeatId"
+                                     data-row="@seat.Row"
+                                     data-number="@seat.SeatNumber"
+                                     data-status="@((int)seat.Status)">
+                                    @seat.SeatNumber
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Sidebar thông tin đặt ghế -->
+        <div class="col-md-4">
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Thông tin đặt ghế</h5>
+                </div>
+                <div class="card-body">
+                    <div id="selected-seat-info">
+                        <p class="text-muted">Vui lòng chọn ghế</p>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <strong>Sự kiện:</strong>
+                        <p>@Model.EventName</p>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Thời gian:</strong>
+                        <p>@Model.EventDate.ToString("dd/MM/yyyy HH:mm")</p>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Địa điểm:</strong>
+                        <p>@Model.Location</p>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Điểm rèn luyện:</strong>
+                        <p><span class="badge bg-success">@Model.TrainningPoint điểm</span></p>
+                    </div>
+                    <button id="btn-book-seat" class="btn btn-success w-100" disabled>
+                        <i class="fas fa-check"></i> Xác nhận đặt ghế
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            let selectedSeat = null;
+
+            // Xử lý click vào ghế
+            $('.seat-available').click(function() {
+                const seatId = $(this).data('seat-id');
+                const row = $(this).data('row');
+                const number = $(this).data('number');
+
+                // Bỏ chọn ghế cũ
+                if (selectedSeat) {
+                    $('.seat[data-seat-id="' + selectedSeat.id + '"]')
+                        .removeClass('seat-selected')
+                        .addClass('seat-available');
+                }
+
+                // Chọn ghế mới
+                $(this).removeClass('seat-available').addClass('seat-selected');
+                selectedSeat = { id: seatId, row: row, number: number };
+
+                // Cập nhật thông tin
+                $('#selected-seat-info').html(`
+            <div class="alert alert-info mb-0">
+                <strong>Ghế đã chọn:</strong><br>
+                Hàng <strong>${row}</strong> - Số <strong>${number}</strong>
+            </div>
+        `);
+
+                $('#btn-book-seat').prop('disabled', false);
+            });
+
+            // Xử lý đặt ghế
+            $('#btn-book-seat').click(function() {
+                if (!selectedSeat) return;
+
+                const btn = $(this);
+                btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang xử lý...');
+
+                $.ajax({
+                    url: '@Url.Action("BookSeat", "Event")',
+                    type: 'POST',
+                    data: {
+                        eventId: @Model.EventId,
+                        seatId: selectedSeat.id
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Đặt ghế thành công!');
+                            $('.seat-selected')
+                                .removeClass('seat-selected seat-available')
+                                .addClass('seat-booked')
+                                .css('cursor', 'not-allowed');
+
+                            selectedSeat = null;
+                            $('#selected-seat-info').html('<p class="text-muted">Vui lòng chọn ghế</p>');
+                            btn.html('<i class="fas fa-check"></i> Xác nhận đặt ghế');
+                        } else {
+                            alert('Lỗi: ' + response.message);
+                            btn.prop('disabled', false).html('<i class="fas fa-check"></i> Xác nhận đặt ghế');
+                        }
+                    },
+                    error: function() {
+                        alert('Có lỗi xảy ra. Vui lòng thử lại!');
+                        btn.prop('disabled', false).html('<i class="fas fa-check"></i> Xác nhận đặt ghế');
+                    }
+                });
+            });
+        });
+    </script>
+}

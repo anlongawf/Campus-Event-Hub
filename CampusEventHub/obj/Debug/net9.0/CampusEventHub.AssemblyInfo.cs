@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CampusEventHub")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+50fe9a372ef5d6a1f6ebb7d4f578c35ef90d97d3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+67e0cdedef79ccfd4356d953762e26a9f1bdaa31")]
 [assembly: System.Reflection.AssemblyProductAttribute("CampusEventHub")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CampusEventHub")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

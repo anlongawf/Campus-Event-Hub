@@ -44,6 +44,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQXV0aC9WZXJpZnlDb2RlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Event/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRXZlbnQvSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Event/SelectSeat.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRXZlbnQvU2VsZWN0U2VhdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Home/Events.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9FdmVudHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 

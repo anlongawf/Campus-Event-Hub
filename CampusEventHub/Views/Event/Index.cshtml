@@ -1,0 +1,54 @@
+@model List<CampusEventHub.Models.Event>
+
+@{
+    ViewData["Title"] = "Danh sách sự kiện";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Danh sách sự kiện</h2>
+
+    <div class="row">
+        @foreach (var evt in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    @if (!string.IsNullOrEmpty(evt.ImageUrl))
+                    {
+                        <img src="@evt.ImageUrl" class="card-img-top" alt="@evt.EventName" style="height: 200px; object-fit: cover;">
+                    }
+                    else
+                    {
+                        <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <span class="text-white">No Image</span>
+                        </div>
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@evt.EventName</h5>
+                        <p class="card-text">@evt.Description</p>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar"></i> @evt.EventDate.ToString("dd/MM/yyyy HH:mm")
+                            </small>
+                        </p>
+                        @if (!string.IsNullOrEmpty(evt.Location))
+                        {
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <i class="fas fa-map-marker-alt"></i> @evt.Location
+                                </small>
+                            </p>
+                        }
+                        <p class="card-text">
+                            <span class="badge bg-success">Điểm rèn luyện: @evt.TrainningPoint</span>
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-action="SelectSeat" asp-route-id="@evt.EventId" class="btn btn-primary w-100">
+                            <i class="fas fa-chair"></i> Chọn ghế
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
