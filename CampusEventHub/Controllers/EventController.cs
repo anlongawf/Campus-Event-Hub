@@ -21,6 +21,19 @@ public class EventController : Controller
         var events = _context.Events.ToList();
         return View(events);
     }
+    
+    // Hiển thị danh sách sự kiện chi tiết
+    public IActionResult Details(int id)
+    {
+        var evt = _context.Events
+            .Include(e => e.Seats)
+            .FirstOrDefault(e => e.EventId == id);
+
+        if (evt == null)
+            return NotFound();
+
+        return View(evt); // trả về EventDetails.cshtml
+    }
 
     // Hiển thị giao diện chọn ghế
     [HttpGet]
@@ -49,6 +62,11 @@ public class EventController : Controller
         {
             return Json(new { success = false, message = "Ghế không tồn tại" });
         }
+        
+        // Xử lí kiểm tra nếu có yêu cầu thanh toán
+        //
+        //
+        
 
         if (seat.Status != SeatStatus.Available)
         {

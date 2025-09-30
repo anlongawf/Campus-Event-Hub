@@ -24,7 +24,12 @@
                     }
                     <div class="card-body">
                         <h5 class="card-title">@evt.EventName</h5>
-                        <p class="card-text">@evt.Description</p>
+                        <p class="card-text">
+                            @(evt.Description != null && evt.Description.Length > 25
+                                ? evt.Description.Substring(0, 25) + "..."
+                                : evt.Description)
+                        </p>
+
                         <p class="card-text">
                             <small class="text-muted">
                                 <i class="fas fa-calendar"></i> @evt.EventDate.ToString("dd/MM/yyyy HH:mm")
@@ -43,9 +48,20 @@
                         </p>
                     </div>
                     <div class="card-footer">
-                        <a asp-action="SelectSeat" asp-route-id="@evt.EventId" class="btn btn-primary w-100">
-                            <i class="fas fa-chair"></i> Chọn ghế
-                        </a>
+                        <div class="card-footer d-flex gap-2">
+                            <!-- Nút chọn ghế -->
+                            <a asp-action="SelectSeat" asp-controller="Event" asp-route-id="@evt.EventId"
+                               class="btn btn-primary flex-fill">
+                                <i class="fas fa-chair"></i> Chọn ghế
+                            </a>
+
+                            <!-- Nút xem chi tiết -->
+                            <a asp-action="Details" asp-controller="Event" asp-route-id="@evt.EventId"
+                               class="btn btn-outline-secondary flex-fill">
+                                <i class="fas fa-info-circle"></i> Chi tiết
+                            </a>
+                        </div>
+
                     </div>
                 </div>
             </div>

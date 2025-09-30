@@ -46,6 +46,7 @@ public class AuthController : Controller
         if (user != null && PasswordHelper.VerifyPassword(model.Password, user.Password))
         {
             HttpContext.Session.SetString("UserId", user.UserId.ToString());
+            HttpContext.Session.SetString("UserName", user.UserName);
             ViewBag.UserName = user.UserName;
             TempData["Success"] = "Đăng nhập thành công!";
             
@@ -140,5 +141,15 @@ public class AuthController : Controller
         }
         return View(model);
     }
+    
+    [HttpPost]
+    public IActionResult Logout()
+    {
+        // Xóa session
+        HttpContext.Session.Clear();
+
+        TempData["Success"] = "Bạn đã đăng xuất thành công!";
+        return RedirectToAction("Index", "Home");
+    }   
     
 }

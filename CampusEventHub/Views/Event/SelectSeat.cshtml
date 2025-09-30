@@ -5,11 +5,37 @@
     var seatsByRow = Model.Seats.GroupBy(s => s.Row).OrderBy(g => g.Key);
 }
 
+@functions {
+    string GetSeatClass(SeatStatus status)
+    {
+        return status switch
+        {
+            SeatStatus.Available => "seat-available",
+            SeatStatus.Booked    => "seat-booked",
+            SeatStatus.Reserved  => "seat-reserved",
+            _ => "seat-available"
+        };
+    }
+}
+
+
 <div class="container mt-4">
     <div class="row">
         <div class="col-md-8">
             <h3 class="mb-3">@Model.EventName</h3>
             <p class="text-muted">@Model.EventDate.ToString("dd/MM/yyyy HH:mm") - @Model.Location</p>
+
+            <!-- Toggle View Mode -->
+            <div class="mb-3">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary active" id="btn-view-3d">
+                        <i class="fas fa-cube"></i> Xem 3D
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" id="btn-view-2d">
+                        <i class="fas fa-th"></i> Xem 2D
+                    </button>
+                </div>
+            </div>
 
             <!-- Chú thích -->
             <div class="mb-4 p-3 border rounded bg-light">
@@ -40,8 +66,37 @@
             </div>
 
             <!-- 3D Seat Map -->
-            <div class="seat-map">
+            <div id="seat-map-3d" class="seat-map">
                 <canvas id="seatCanvas" style="width: 100%; height: 400px;"></canvas>
+            </div>
+
+            <!-- 2D Seat Map -->
+            <div id="seat-map-2d" class="seat-map-2d" style="display: none;">
+                <div class="seat-grid-container">
+                    @foreach (var rowGroup in seatsByRow)
+                    {
+                        <div class="seat-row">
+                            <div class="row-label">@rowGroup.Key</div>
+                            <div class="seats-container">
+                                @foreach (var seat in rowGroup.OrderBy(s => s.SeatNumber))
+                                {
+                                    var statusClass = GetSeatClass(seat.Status);
+
+                                    <button class="seat-2d @statusClass"
+                                            data-seat-id="@seat.SeatId"
+                                            data-row="@seat.Row"
+                                            data-number="@seat.SeatNumber"
+                                            data-status="@((int)seat.Status)"
+                                            @(seat.Status != SeatStatus.Available ? "disabled" : "")>
+                                        @seat.SeatNumber
+                                    </button>
+                                }
+
+                            </div>
+                            <div class="row-label">@rowGroup.Key</div>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
 
@@ -83,610 +138,14 @@
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script>
-        $(document).ready(function() {
-            let selectedSeat = null;
-            let scene, camera, renderer, raycaster, mouse, seats = [];
-            let controls;
-
-            // Initialize Three.js
-            function initThreeJS() {
-                const canvas = document.getElementById('seatCanvas');
-                scene = new THREE.Scene();
-                scene.background = new THREE.Color(0xf0f0f0);
-
-                camera = new THREE.PerspectiveCamera(60, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-                renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-                renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-                renderer.shadowMap.enabled = true;
-                renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-                // Custom OrbitControls implementation
-                setupCameraControls();
-
-                // Position camera for better view
-                camera.position.set(0, 20, 30);
-                camera.lookAt(0, 0, 0);
-
-                // Add lighting
-                const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-                scene.add(ambientLight);
-
-                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-                directionalLight.position.set(10, 20, 10);
-                directionalLight.castShadow = true;
-                scene.add(directionalLight);
-
-                // Add spotlight for stage
-                const spotLight = new THREE.SpotLight(0xffffff, 0.5);
-                spotLight.position.set(0, 15, -10);
-                spotLight.target.position.set(0, 0, -8);
-                scene.add(spotLight);
-                scene.add(spotLight.target);
-
-                // Raycaster for mouse interaction
-                raycaster = new THREE.Raycaster();
-                mouse = new THREE.Vector2();
-
-                // Add floor
-                const floorGeometry = new THREE.PlaneGeometry(60, 50);
-                const floorMaterial = new THREE.MeshStandardMaterial({
-                    color: 0x2c3e50,
-                    roughness: 0.8,
-                    metalness: 0.2
-                });
-                const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-                floor.rotation.x = -Math.PI / 2;
-                floor.position.y = -0.5;
-                floor.receiveShadow = true;
-                scene.add(floor);
-
-                // Create stage
-                createStage();
-
-                // Create theater structure
-                createTheaterStructure();
-
-                // Create aisles and entrances
-                createAislesAndEntrances();
-
-                // Create seats with sections
-                createSeats();
-
-                // Add seat labels
-                addSeatLabels();
-
-                // Animation loop
-                animate();
-            }
-
-            // Create realistic stage
-            function createStage() {
-                // Stage platform
-                const stageGeometry = new THREE.BoxGeometry(35, 1.5, 8);
-                const stageMaterial = new THREE.MeshStandardMaterial({
-                    color: 0x1a1a1a,
-                    roughness: 0.7,
-                    metalness: 0.3
-                });
-                const stage = new THREE.Mesh(stageGeometry, stageMaterial);
-                stage.position.set(0, 0.25, -15);
-                stage.castShadow = true;
-                stage.receiveShadow = true;
-                scene.add(stage);
-
-                // Stage curtain backdrop
-                const curtainGeometry = new THREE.PlaneGeometry(36, 10);
-                const curtainMaterial = new THREE.MeshStandardMaterial({
-                    color: 0x8b0000,
-                    side: THREE.DoubleSide
-                });
-                const curtain = new THREE.Mesh(curtainGeometry, curtainMaterial);
-                curtain.position.set(0, 5, -19);
-                scene.add(curtain);
-
-                // Stage edge highlight
-                const edgeGeometry = new THREE.BoxGeometry(35, 0.3, 0.8);
-                const edgeMaterial = new THREE.MeshStandardMaterial({ color: 0xffd700 });
-                const edge = new THREE.Mesh(edgeGeometry, edgeMaterial);
-                edge.position.set(0, 1, -11);
-                scene.add(edge);
-
-                // Add "STAGE" text indicator
-                createTextLabel('SÂN KHẤU / STAGE', 0, 1.5, -11, 0xffd700);
-            }
-
-            // Create theater structure (columns, walls)
-            function createTheaterStructure() {
-                const columnMaterial = new THREE.MeshStandardMaterial({
-                    color: 0x34495e,
-                    roughness: 0.6,
-                    metalness: 0.4
-                });
-
-                // Side columns
-                const columnPositions = [
-                    [-22, 0, -10], [22, 0, -10],
-                    [-22, 0, 0], [22, 0, 0],
-                    [-22, 0, 10], [22, 0, 10]
-                ];
-
-                columnPositions.forEach(pos => {
-                    const columnGeometry = new THREE.CylinderGeometry(0.8, 1, 12, 8);
-                    const column = new THREE.Mesh(columnGeometry, columnMaterial);
-                    column.position.set(pos[0], 6, pos[2]);
-                    column.castShadow = true;
-                    scene.add(column);
-                });
-            }
-
-            // Create aisles and entrance markers
-            function createAislesAndEntrances() {
-                const aisleMaterial = new THREE.MeshStandardMaterial({
-                    color: 0x7f8c8d,
-                    roughness: 0.9
-                });
-
-                // Main center aisle
-                const centerAisle = new THREE.BoxGeometry(3, 0.1, 30);
-                const centerAisleMesh = new THREE.Mesh(centerAisle, aisleMaterial);
-                centerAisleMesh.position.set(0, -0.4, 0);
-                scene.add(centerAisleMesh);
-
-                // Side aisles
-                const sideAisle1 = new THREE.BoxGeometry(2, 0.1, 30);
-                const sideAisleMesh1 = new THREE.Mesh(sideAisle1, aisleMaterial);
-                sideAisleMesh1.position.set(-12, -0.4, 0);
-                scene.add(sideAisleMesh1);
-
-                const sideAisleMesh2 = new THREE.Mesh(sideAisle1, aisleMaterial);
-                sideAisleMesh2.position.set(12, -0.4, 0);
-                scene.add(sideAisleMesh2);
-
-                // Entrance markers (back of theater)
-                const entranceMaterial = new THREE.MeshStandardMaterial({
-                    color: 0x2ecc71,
-                    emissive: 0x27ae60,
-                    emissiveIntensity: 0.5
-                });
-
-                // Left entrance
-                const entranceGeometry = new THREE.BoxGeometry(3, 2, 0.5);
-                const leftEntrance = new THREE.Mesh(entranceGeometry, entranceMaterial);
-                leftEntrance.position.set(-18, 1, 15);
-                scene.add(leftEntrance);
-                createTextLabel('ENTRANCE 1', -18, 2.5, 15, 0x2ecc71);
-
-                // Center entrance
-                const centerEntrance = new THREE.Mesh(entranceGeometry, entranceMaterial);
-                centerEntrance.position.set(0, 1, 15);
-                scene.add(centerEntrance);
-                createTextLabel('ENTRANCE 2', 0, 2.5, 15, 0x2ecc71);
-
-                // Right entrance
-                const rightEntrance = new THREE.Mesh(entranceGeometry, entranceMaterial);
-                rightEntrance.position.set(18, 1, 15);
-                scene.add(rightEntrance);
-                createTextLabel('ENTRANCE 3', 18, 2.5, 15, 0x2ecc71);
-
-                // Emergency exits
-                const exitMaterial = new THREE.MeshStandardMaterial({
-                    color: 0xe74c3c,
-                    emissive: 0xc0392b,
-                    emissiveIntensity: 0.5
-                });
-
-                const exitGeometry = new THREE.BoxGeometry(2, 2, 0.5);
-                const leftExit = new THREE.Mesh(exitGeometry, exitMaterial);
-                leftExit.position.set(-22, 1, -5);
-                leftExit.rotation.y = Math.PI / 2;
-                scene.add(leftExit);
-                createTextLabel('EXIT', -23, 2.5, -5, 0xe74c3c);
-
-                const rightExit = new THREE.Mesh(exitGeometry, exitMaterial);
-                rightExit.position.set(22, 1, -5);
-                rightExit.rotation.y = -Math.PI / 2;
-                scene.add(rightExit);
-                createTextLabel('EXIT', 23, 2.5, -5, 0xe74c3c);
-            }
-
-            // Create text label helper
-            function createTextLabel(text, x, y, z, color) {
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                canvas.width = 512;
-                canvas.height = 128;
-
-                context.fillStyle = 'rgba(0, 0, 0, 0.7)';
-                context.fillRect(0, 0, canvas.width, canvas.height);
-
-                context.font = 'Bold 48px Arial';
-                context.fillStyle = '#' + color.toString(16).padStart(6, '0');
-                context.textAlign = 'center';
-                context.textBaseline = 'middle';
-                context.fillText(text, canvas.width / 2, canvas.height / 2);
-
-                const texture = new THREE.CanvasTexture(canvas);
-                const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
-                const sprite = new THREE.Sprite(spriteMaterial);
-                sprite.position.set(x, y, z);
-                sprite.scale.set(4, 1, 1);
-                scene.add(sprite);
-            }
-
-            // Create seat geometry (facing stage = negative Z direction)
-            function createSeatGeometry() {
-                const group = new THREE.Group();
-
-                // Seat cushion
-                const seatBase = new THREE.BoxGeometry(0.7, 0.15, 0.7);
-                const seatBaseMesh = new THREE.Mesh(seatBase);
-                seatBaseMesh.position.y = 0.35;
-                group.add(seatBaseMesh);
-
-                // Seat backrest - ở phía SAU ghế (Z dương)
-                const seatBack = new THREE.BoxGeometry(0.7, 0.7, 0.12);
-                const seatBackMesh = new THREE.Mesh(seatBack);
-                seatBackMesh.position.set(0, 0.7, 0.35); // Z dương = phía sau
-                seatBackMesh.rotation.x = -0.15;
-                group.add(seatBackMesh);
-
-                // Armrests
-                const armrestGeometry = new THREE.BoxGeometry(0.1, 0.35, 0.5);
-                const leftArmrest = new THREE.Mesh(armrestGeometry);
-                leftArmrest.position.set(-0.4, 0.45, 0.1);
-                group.add(leftArmrest);
-
-                const rightArmrest = new THREE.Mesh(armrestGeometry);
-                rightArmrest.position.set(0.4, 0.45, 0.1);
-                group.add(rightArmrest);
-
-                // Seat legs
-                const legGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.3, 8);
-                const legPositions = [
-                    [-0.3, 0.15, -0.2], // Chân trước (Z âm = phía trước)
-                    [0.3, 0.15, -0.2],
-                    [-0.3, 0.15, 0.3],  // Chân sau (Z dương = phía sau)
-                    [0.3, 0.15, 0.3]
-                ];
-
-                legPositions.forEach(pos => {
-                    const leg = new THREE.Mesh(legGeometry);
-                    leg.position.set(pos[0], pos[1], pos[2]);
-                    group.add(leg);
-                });
-
-                // Ghế mặc định đã hướng về -Z (về phía sân khấu)
-                // Không cần xoay thêm
-
-                return group;
-            }
-
-            // Create seats organized by sections
-            function createSeats() {
-                const seatData = @Html.Raw(Json.Serialize(Model.Seats.OrderBy(s => s.Row).ThenBy(s => s.SeatNumber)
-                                     .Select(s => new { s.SeatId, s.Row, s.SeatNumber, s.Status })));
-
-                // Calculate layout parameters
-                const seatsPerRow = Math.max(...seatData.map(s => s.seatNumber));
-                const rows = [...new Set(seatData.map(s => s.row))].sort();
-
-                // Define sections (Left, Center, Right)
-                const sections = {
-                    left: { start: 1, end: Math.floor(seatsPerRow / 3), xOffset: -12 },
-                    center: { start: Math.floor(seatsPerRow / 3) + 1, end: Math.floor(seatsPerRow * 2 / 3), xOffset: 0 },
-                    right: { start: Math.floor(seatsPerRow * 2 / 3) + 1, end: seatsPerRow, xOffset: 12 }
-                };
-
-                seatData.forEach((seat) => {
-                    let color;
-                    switch (seat.status) {
-                        case 0: // Available - Green
-                            color = 0x27ae60;
-                            break;
-                        case 1: // Booked - Gray
-                            color = 0x95a5a6;
-                            break;
-                        case 2: // Reserved by Department - Red
-                            color = 0xe74c3c;
-                            break;
-                        case 3: // Disabled - Dark gray
-                            color = 0x34495e;
-                            break;
-                        default:
-                            color = 0x27ae60;
-                    }
-
-                    const seatGroup = createSeatGeometry();
-                    const material = new THREE.MeshStandardMaterial({
-                        color: color,
-                        roughness: 0.7,
-                        metalness: 0.2
-                    });
-
-                    seatGroup.traverse((child) => {
-                        if (child instanceof THREE.Mesh) {
-                            child.material = material.clone();
-                            child.castShadow = true;
-                            child.receiveShadow = true;
-                        }
-                    });
-
-                    // Determine section
-                    let section = 'center';
-                    let sectionXOffset = 0;
-                    if (seat.seatNumber <= sections.left.end) {
-                        section = 'left';
-                        sectionXOffset = sections.left.xOffset;
-                    } else if (seat.seatNumber >= sections.right.start) {
-                        section = 'right';
-                        sectionXOffset = sections.right.xOffset;
-                    }
-
-                    // Calculate position
-                    const rowIndex = seat.row.charCodeAt(0) - 65;
-                    let localSeatNumber = seat.seatNumber;
-
-                    if (section === 'left') {
-                        localSeatNumber = seat.seatNumber;
-                    } else if (section === 'center') {
-                        localSeatNumber = seat.seatNumber - sections.center.start;
-                    } else {
-                        localSeatNumber = seat.seatNumber - sections.right.start;
-                    }
-
-                    const xPos = localSeatNumber * 1.2 - 3 + sectionXOffset;
-                    const zPos = rowIndex * 1.8 - 8;
-
-                    // Add slight curve and elevation for better viewing
-                    const curve = Math.pow(xPos / 15, 2) * 0.3;
-                    const elevation = rowIndex * 0.15; // Tiered seating
-
-                    seatGroup.position.set(xPos, curve + elevation, zPos);
-
-                    // Ghế hướng về phía sân khấu (sân khấu ở Z âm, ghế nhìn về hướng đó)
-                    // Không xoay gì cả, mặc định ghế đã quay đúng hướng về -Z (sân khấu)
-
-                    seatGroup.userData = {
-                        seatId: seat.seatId,
-                        row: seat.row,
-                        number: seat.seatNumber,
-                        status: seat.status,
-                        section: section,
-                        originalColor: color,
-                        nearestAisle: determineNearestAisle(seat.seatNumber, section),
-                        nearestEntrance: determineNearestEntrance(rowIndex, xPos)
-                    };
-
-                    scene.add(seatGroup);
-                    seats.push(seatGroup);
-                });
-
-                // Add section labels
-                createTextLabel('KHU TRÁI', -12, 0.5, -10, 0x3498db);
-                createTextLabel('KHU GIỮA', 0, 0.5, -10, 0x3498db);
-                createTextLabel('KHU PHẢI', 12, 0.5, -10, 0x3498db);
-            }
-
-            // Determine nearest aisle for wayfinding
-            function determineNearestAisle(seatNumber, section) {
-                if (section === 'left') {
-                    return 'Lối đi bên trái';
-                } else if (section === 'right') {
-                    return 'Lối đi bên phải';
-                } else {
-                    return 'Lối đi trung tâm';
-                }
-            }
-
-            // Determine nearest entrance for wayfinding
-            function determineNearestEntrance(rowIndex, xPos) {
-                if (rowIndex > 10) {
-                    if (xPos < -10) return 'Cửa vào 1 (Trái)';
-                    if (xPos > 10) return 'Cửa vào 3 (Phải)';
-                    return 'Cửa vào 2 (Giữa)';
-                }
-                return 'Đi qua lối đi chính';
-            }
-
-            // Add row labels
-            function addSeatLabels() {
-                const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-                rows.forEach((row, index) => {
-                    const z = index * 1.8 - 8;
-                    createTextLabel(row, -20, 0.5, z, 0x95a5a6);
-                    createTextLabel(row, 20, 0.5, z, 0x95a5a6);
-                });
-            }
-
-            // Camera controls - Simple drag to rotate
-            function setupCameraControls() {
-                let isDragging = false;
-                let previousMousePosition = { x: 0, y: 0 };
-                const canvas = document.getElementById('seatCanvas');
-                let cameraAngleX = 0;
-                let cameraAngleY = 0.6; // Start angle
-                let radius = 35; // Initial camera distance
-                const minRadius = 20; // Minimum zoom distance
-                const maxRadius = 50; // Maximum zoom distance
-
-                // Update camera position based on angles and radius
-                function updateCameraPosition() {
-                    camera.position.x = radius * Math.sin(cameraAngleX) * Math.cos(cameraAngleY);
-                    camera.position.y = radius * Math.sin(cameraAngleY);
-                    camera.position.z = radius * Math.cos(cameraAngleX) * Math.cos(cameraAngleY);
-                    camera.lookAt(0, 0, 0);
-                }
-
-                canvas.addEventListener('mousedown', (e) => {
-                    isDragging = true;
-                    previousMousePosition = { x: e.clientX, y: e.clientY };
-                });
-
-                canvas.addEventListener('mousemove', (e) => {
-                    if (isDragging) {
-                        const deltaX = e.clientX - previousMousePosition.x;
-                        const deltaY = e.clientY - previousMousePosition.y;
-
-                        cameraAngleX += deltaX * 0.005;
-                        cameraAngleY = Math.max(0.1, Math.min(1.5, cameraAngleY - deltaY * 0.005));
-
-                        updateCameraPosition();
-                        previousMousePosition = { x: e.clientX, y: e.clientY };
-                    }
-                });
-
-                canvas.addEventListener('mouseup', () => {
-                    isDragging = false;
-                });
-
-                canvas.addEventListener('mouseleave', () => {
-                    isDragging = false;
-                });
-
-                // Add zoom functionality with mouse wheel
-                canvas.addEventListener('wheel', (e) => {
-                    e.preventDefault();
-                    const zoomSpeed = 0.1; // Adjust zoom sensitivity
-                    radius += e.deltaY * zoomSpeed;
-                    radius = Math.max(minRadius, Math.min(maxRadius, radius)); // Clamp radius
-                    updateCameraPosition();
-                });
-
-                canvas.addEventListener('contextmenu', (e) => e.preventDefault());
-
-                // Initialize camera position
-                updateCameraPosition();
-            }
-
-            function animate() {
-                requestAnimationFrame(animate);
-                renderer.render(scene, camera);
-            }
-
-            function onWindowResize() {
-                const canvas = document.getElementById('seatCanvas');
-                camera.aspect = canvas.clientWidth / canvas.clientHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-            }
-            window.addEventListener('resize', onWindowResize);
-
-            function onMouseClick(event) {
-                event.preventDefault();
-                const canvas = document.getElementById('seatCanvas');
-                const rect = canvas.getBoundingClientRect();
-                mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-                mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-                raycaster.setFromCamera(mouse, camera);
-                const intersects = raycaster.intersectObjects(seats, true);
-
-                if (intersects.length > 0) {
-                    let seatGroup = intersects[0].object;
-                    while (seatGroup.parent && seatGroup.parent.type !== 'Scene') {
-                        seatGroup = seatGroup.parent;
-                    }
-
-                    if (seatGroup.userData.status !== 0) {
-                        let statusText = '';
-                        switch(seatGroup.userData.status) {
-                            case 1: statusText = 'Ghế này đã được đặt'; break;
-                            case 2: statusText = 'Ghế này đã bị khóa bởi Khoa'; break;
-                            case 3: statusText = 'Ghế này không khả dụng'; break;
-                        }
-                        alert(statusText);
-                        return;
-                    }
-
-                    // Reset previous selection
-                    if (selectedSeat) {
-                        const prevSeat = seats.find(s => s.userData.seatId === selectedSeat.id);
-                        if (prevSeat) {
-                            prevSeat.traverse((child) => {
-                                if (child instanceof THREE.Mesh) {
-                                    child.material.color.setHex(prevSeat.userData.originalColor);
-                                }
-                            });
-                        }
-                    }
-
-                    // Highlight selected seat
-                    seatGroup.traverse((child) => {
-                        if (child instanceof THREE.Mesh) {
-                            child.material.color.setHex(0xf39c12); // Orange
-                        }
-                    });
-
-                    selectedSeat = {
-                        id: seatGroup.userData.seatId,
-                        row: seatGroup.userData.row,
-                        number: seatGroup.userData.number,
-                        section: seatGroup.userData.section,
-                        nearestAisle: seatGroup.userData.nearestAisle,
-                        nearestEntrance: seatGroup.userData.nearestEntrance
-                    };
-
-                    $('#selected-seat-info').html(`
-                <div class="alert alert-info mb-0">
-                    <strong>Ghế đã chọn:</strong><br>
-                    <strong>Hàng ${selectedSeat.row}</strong> - <strong>Số ${selectedSeat.number}</strong><br>
-                    <hr>
-                    <small><strong>Khu vực:</strong> ${selectedSeat.section === 'left' ? 'Trái' : selectedSeat.section === 'right' ? 'Phải' : 'Giữa'}</small><br>
-                    <small><strong>Lối đi gần nhất:</strong> ${selectedSeat.nearestAisle}</small><br>
-                    <small><strong>Cửa vào:</strong> ${selectedSeat.nearestEntrance}</small>
-                </div>
-            `);
-                    $('#btn-book-seat').prop('disabled', false);
-                }
-            }
-
-            // Book seat
-            $('#btn-book-seat').click(function() {
-                if (!selectedSeat) return;
-
-                const btn = $(this);
-                btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang xử lý...');
-
-                $.ajax({
-                    url: '@Url.Action("BookSeat", "Event")',
-                    type: 'POST',
-                    data: {
-                        eventId: @Model.EventId,
-                        seatId: selectedSeat.id
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            alert('Đặt ghế thành công!\n\nHướng dẫn: ' + selectedSeat.nearestEntrance + '\nĐi theo ' + selectedSeat.nearestAisle);
-                            const seatGroup = seats.find(s => s.userData.seatId === selectedSeat.id);
-                            if (seatGroup) {
-                                seatGroup.traverse((child) => {
-                                    if (child instanceof THREE.Mesh) {
-                                        child.material.color.setHex(0x95a5a6);
-                                    }
-                                });
-                                seatGroup.userData.status = 1;
-                                seatGroup.userData.originalColor = 0x95a5a6;
-                            }
-                            selectedSeat = null;
-                            $('#selected-seat-info').html('<p class="text-muted">Vui lòng chọn ghế</p>');
-                            btn.html('<i class="fas fa-check"></i> Xác nhận đặt ghế');
-                        } else {
-                            alert('Lỗi: ' + response.message);
-                            btn.prop('disabled', false).html('<i class="fas fa-check"></i> Xác nhận đặt ghế');
-                        }
-                    },
-                    error: function() {
-                        alert('Có lỗi xảy ra. Vui lòng thử lại!');
-                        btn.prop('disabled', false).html('<i class="fas fa-check"></i> Xác nhận đặt ghế');
-                    }
-                });
-            });
-
-            // Initialize
-            initThreeJS();
-            document.getElementById('seatCanvas').addEventListener('click', onMouseClick);
-        });
+        // Pass data from server to JavaScript - PHẢI ĐẶT TRƯỚC KHI LOAD seat-selection.js
+        window.seatData = @Html.Raw(Json.Serialize(Model.Seats.OrderBy(s => s.Row).ThenBy(s => s.SeatNumber)
+                              .Select(s => new { s.SeatId, s.Row, s.SeatNumber, s.Status })));
+        window.eventId = @Model.EventId;
+        window.bookSeatUrl = '@Url.Action("BookSeat", "Event")';
+
+        console.log('Seat data loaded:', window.seatData); // Debug log
     </script>
+    <script src="~/js/seat-selection.js"></script>
 }
