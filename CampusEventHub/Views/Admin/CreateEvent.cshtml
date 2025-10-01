@@ -1,0 +1,121 @@
+@model CampusEventHub.Models.Event
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tạo sự kiện mới</title>
+</head>
+<body>
+<div class="container">
+    <h1>Tạo sự kiện mới</h1>
+
+    <form asp-action="CreateEvent" asp-controller="Admin" method="post">
+        <div class="form-group">
+            <label asp-for="EventName" class="required">Tên sự kiện</label>
+            <input asp-for="EventName" type="text" placeholder="Ví dụ: Hội thảo Khởi nghiệp 2025" />
+            <span asp-validation-for="EventName" class="validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Description">Mô tả</label>
+            <textarea asp-for="Description" placeholder="Mô tả chi tiết về sự kiện, nội dung chương trình, lợi ích..."></textarea>
+            <span asp-validation-for="Description" class="validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Location">Địa điểm</label>
+            <input asp-for="Location" type="text" placeholder="Ví dụ: Hội trường A, Tòa nhà B" />
+            <span asp-validation-for="Location" class="validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="EventDate" class="required">Ngày diễn ra</label>
+            <input asp-for="EventDate" type="date" />
+            <span asp-validation-for="EventDate" class="validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="TrainningPoint">Điểm rèn luyện</label>
+            <input asp-for="TrainningPoint" type="number" min="0" placeholder="Số điểm rèn luyện (0-100)" />
+            <span asp-validation-for="TrainningPoint" class="validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ImageUrl">URL hình ảnh</label>
+            <input asp-for="ImageUrl" type="text" placeholder="https://example.com/image.jpg" id="imageUrl" />
+            <span asp-validation-for="ImageUrl" class="validation-error"></span>
+            <div class="image-preview" id="imagePreview">
+                <img src="" alt="Preview" id="previewImg" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="required">Phạm vi ghế</label>
+            <select name="type" id="seatType">
+                <option value="class">Lớp nhỏ (A-B) - Khoảng 20 ghế</option>
+                <option value="course">Khóa nhỏ (A-D) - Khoảng 40 ghế</option>
+                <option value="department">Toàn khoa (A-F) - Khoảng 60 ghế</option>
+            </select>
+            <div class="seat-type-info" id="seatInfo">
+                <span class="info-icon">ℹ️</span>
+                <strong>Lớp nhỏ:</strong> Phù hợp cho các buổi học nhóm, workshop nhỏ
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn-create">
+                Tạo sự kiện
+            </button>
+            <a href="@Url.Action("Index", "Admin")" class="btn btn-cancel">
+                Hủy
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Preview image
+    const imageUrlInput = document.getElementById('imageUrl');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+
+    imageUrlInput?.addEventListener('input', function(e) {
+        const url = e.target.value.trim();
+        if (url) {
+            previewImg.src = url;
+            imagePreview.style.display = 'block';
+            previewImg.onerror = function() {
+                imagePreview.style.display = 'none';
+            };
+        } else {
+            imagePreview.style.display = 'none';
+        }
+    });
+
+    // Seat type info
+    const seatTypeSelect = document.getElementById('seatType');
+    const seatInfo = document.getElementById('seatInfo');
+
+    const seatInfoTexts = {
+        'class': '<span class="info-icon">ℹ️</span><strong>Lớp nhỏ:</strong> Phù hợp cho các buổi học nhóm, workshop nhỏ (~20 ghế)',
+        'course': '<span class="info-icon">ℹ️</span><strong>Khóa nhỏ:</strong> Phù hợp cho seminar, training vừa (~40 ghế)',
+        'department': '<span class="info-icon">ℹ️</span><strong>Toàn khoa:</strong> Phù hợp cho hội thảo lớn, sự kiện toàn khoa (~60 ghế)'
+    };
+
+    seatTypeSelect?.addEventListener('change', function(e) {
+        seatInfo.innerHTML = seatInfoTexts[e.target.value];
+    });
+
+    // Set min date to today
+    const dateInput = document.querySelector('input[type="date"]');
+    if (dateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.min = today;
+    }
+</script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+</body>
+</html>

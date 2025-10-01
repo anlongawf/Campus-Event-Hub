@@ -1,61 +1,154 @@
-@model CampusEventHub.Models.Event
+@model IEnumerable<CampusEventHub.Models.Event>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tạo Event</title>
+    <title>Quản lý sự kiện</title>
 </head>
 <body>
-<div>
-    <h1>Admin - Tạo sự kiện</h1>
+<div class="container">
+    <h1>
+        Quản lý sự kiện
+        <a href="@Url.Action("CreateEvent", "Admin")" class="btn btn-primary">
+            ➕ Tạo sự kiện mới
+        </a>
+    </h1>
 
-    <form asp-action="CreateEvent" asp-controller="Admin" method="post">
-        <div>
-            <label asp-for="EventName"></label>
-            <input asp-for="EventName" placeholder="Tên sự kiện" />
-            <span asp-validation-for="EventName"></span>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
         </div>
+    }
 
-        <div>
-            <label asp-for="Description"></label>
-            <input asp-for="Description" placeholder="Mô tả" />
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-error">
+            @TempData["ErrorMessage"]
         </div>
+    }
 
-        <div>
-            <label asp-for="Location"></label>
-            <input asp-for="Location" placeholder="Địa điểm" />
+    @if (TempData["WarningMessage"] != null)
+    {
+        <div class="alert alert-warning">
+            ⚠️ @TempData["WarningMessage"]
         </div>
+    }
 
-        <div>
-            <label asp-for="TrainningPoint"></label>
-            <input asp-for="TrainningPoint" placeholder="Điểm rèn luyện" />
+    @if (Model != null && Model.Any())
+    {
+        <div class="events-grid">
+            @foreach (var evt in Model)
+            {
+                var availableCount = evt.Seats.Count(s => s.Status == CampusEventHub.Models.SeatStatus.Available);
+                var bookedCount = evt.Seats.Count(s => s.Status == CampusEventHub.Models.SeatStatus.Booked);
+                var reservedCount = evt.Seats.Count(s => s.Status == CampusEventHub.Models.SeatStatus.Reserved);
+                var isPast = evt.EventDate < DateTime.Now;
+
+                <div class="event-card">
+                    @if (!string.IsNullOrEmpty(evt.ImageUrl))
+                    {
+                        <img src="@evt.ImageUrl" alt="@evt.EventName" class="event-image" onerror="this.src='https://via.placeholder.com/350x200?text=No+Image'" />
+                    }
+                    else
+                    {
+                        <div class="event-image"></div>
+                    }
+
+                    <div class="event-content">
+                        <div class="event-title">
+                            @evt.EventName
+                            @if (isPast)
+                            {
+                                <span class="badge badge-danger">Đã qua</span>
+                            }
+                            else if (availableCount == 0)
+                            {
+                                <span class="badge badge-warning">Hết chỗ</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-success">Còn chỗ</span>
+                            }
+                        </div>
+
+                        <div class="event-info">
+                            📅 @evt.EventDate.ToString("dd/MM/yyyy HH:mm")
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(evt.Location))
+                        {
+                            <div class="event-info">
+                                📍 @evt.Location
+                            </div>
+                        }
+
+                        <div class="event-info">
+                            ⭐ @evt.TrainningPoint điểm rèn luyện
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(evt.Description))
+                        {
+                            <div class="event-description">
+                                @evt.Description
+                            </div>
+                        }
+
+                        <div class="event-actions">
+                            <a href="@Url.Action("EditEvent", "Admin", new { id = evt.EventId })"
+                               class="btn btn-warning btn-sm">
+                                ✏️ Sửa
+                            </a>
+
+                            <a href="@Url.Action("ViewEventDetails", "Admin", new { id = evt.EventId })"
+                               class="btn btn-info btn-sm">
+                                👁️ Chi tiết
+                            </a>
+
+                            <form asp-action="DeleteEvent" asp-controller="Admin" method="post"
+                                  style="display: inline;"
+                                  onsubmit="return confirm('⚠️ Bạn có chắc chắn muốn xóa sự kiện này?');">
+                                <input type="hidden" name="id" value="@evt.EventId" />
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    🗑️ Xóa
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="event-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">@evt.Seats.Count</span>
+                            <span class="stat-label">Tổng ghế</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number stat-available">@availableCount</span>
+                            <span class="stat-label">Còn trống</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number stat-booked">@bookedCount</span>
+                            <span class="stat-label">Đã đặt</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number stat-reserved">@reservedCount</span>
+                            <span class="stat-label">Bị khóa</span>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
-
-        <div>
-            <label asp-for="EventDate"></label>
-            <input asp-for="EventDate" type="date" />
-            <span asp-validation-for="EventDate"></span>
+    }
+    else
+    {
+        <div class="no-events">
+            <div class="no-events-icon">📅</div>
+            <h2>Chưa có sự kiện nào</h2>
+            <p>Hãy tạo sự kiện đầu tiên của bạn!</p>
+            <a href="@Url.Action("CreateEvent", "Admin")" class="btn btn-primary" style="margin-top: 20px;">
+                ➕ Tạo sự kiện mới
+            </a>
         </div>
-
-        <!-- Nhập URL ảnh -->
-        <div>
-            <label asp-for="ImageUrl"></label>
-            <input asp-for="ImageUrl" placeholder="https://example.com/image.jpg" />
-            <span asp-validation-for="ImageUrl"></span>
-        </div>
-
-        <!-- Chọn loại phạm vi -->
-        <div>
-            <label>Phạm vi ghế</label>
-            <select name="type">
-                <option value="class">Lớp nhỏ (A-B)</option>
-                <option value="course">Khoa nhỏ (A-D)</option>
-                <option value="department">Toàn khoa (A-F)</option>
-            </select>
-        </div>
-
-        <button type="submit">Tạo Event</button>
-    </form>
+    }
 </div>
 </body>
 </html>

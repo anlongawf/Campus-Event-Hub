@@ -1,0 +1,97 @@
+@model CampusEventHub.Models.Event
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chỉnh sửa sự kiện</title>
+</head>
+<body>
+<h1>Chỉnh sửa sự kiện</h1>
+
+@if (Model.Seats != null && Model.Seats.Any())
+{
+    <div class="seat-info">
+        <strong>📊 Thông tin ghế:</strong>
+        <p>Tổng số ghế: <strong>@Model.Seats.Count</strong></p>
+        <p>Ghế trống: <strong style="color: #28a745;">@Model.Seats.Count(s => s.Status == CampusEventHub.Models.SeatStatus.Available)</strong></p>
+        <p>Ghế đã đặt: <strong style="color: #dc3545;">@Model.Seats.Count(s => s.Status == CampusEventHub.Models.SeatStatus.Booked)</strong></p>
+        <p>Ghế bị khóa: <strong style="color: #ffc107;">@Model.Seats.Count(s => s.Status == CampusEventHub.Models.SeatStatus.Reserved)</strong></p>
+    </div>
+}
+
+<form asp-action="EditEvent" asp-controller="Admin" method="post">
+    <input type="hidden" asp-for="EventId" />
+
+    <div class="form-group">
+        <label asp-for="EventName">Tên sự kiện *</label>
+        <input asp-for="EventName" type="text" placeholder="Nhập tên sự kiện" />
+        <span asp-validation-for="EventName" class="validation-error"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description">Mô tả</label>
+        <textarea asp-for="Description" placeholder="Nhập mô tả chi tiết về sự kiện"></textarea>
+        <span asp-validation-for="Description" class="validation-error"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Location">Địa điểm</label>
+        <input asp-for="Location" type="text" placeholder="Nhập địa điểm tổ chức" />
+        <span asp-validation-for="Location" class="validation-error"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="EventDate">Ngày giờ diễn ra *</label>
+        <input asp-for="EventDate" type="datetime-local" />
+        <span asp-validation-for="EventDate" class="validation-error"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="TrainningPoint">Điểm rèn luyện</label>
+        <input asp-for="TrainningPoint" type="number" min="0" placeholder="Nhập điểm rèn luyện" />
+        <span asp-validation-for="TrainningPoint" class="validation-error"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ImageUrl">URL hình ảnh</label>
+        <input asp-for="ImageUrl" type="text" placeholder="https://example.com/image.jpg" id="imageUrl" />
+        <span asp-validation-for="ImageUrl" class="validation-error"></span>
+
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <div class="image-preview">
+                <img src="@Model.ImageUrl" alt="Event Image" id="previewImage" />
+            </div>
+        }
+    </div>
+
+    <div class="button-group">
+        <button type="submit" class="btn-save">Lưu thay đổi</button>
+        <a href="@Url.Action("Index", "Admin")" class="btn-cancel" style="text-decoration: none; display: inline-block; text-align: center; line-height: 1.5;">
+            Hủy
+        </a>
+    </div>
+</form>
+
+<script>
+    // Preview image khi thay đổi URL
+    document.getElementById('imageUrl')?.addEventListener('input', function(e) {
+        const url = e.target.value;
+        const preview = document.getElementById('previewImage');
+        if (preview && url) {
+            preview.src = url;
+            preview.onerror = function() {
+                this.style.display = 'none';
+            };
+            preview.onload = function() {
+                this.style.display = 'block';
+            };
+        }
+    });
+</script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+</body>
+</html>

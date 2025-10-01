@@ -78,4 +78,5 @@ public class EventController : Controller
 
         return Json(new { success = true, message = "Đặt ghế thành công" });
     }
+    
 }
