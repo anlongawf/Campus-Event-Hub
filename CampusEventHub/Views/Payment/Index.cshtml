@@ -1,0 +1,31 @@
+@model CampusEventHub.Models.OrderInfo
+
+@{
+    ViewData["Title"] = "Thanh toán VNPAY";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">💳 Thanh toán qua VNPAY</h3>
+        </div>
+        <div class="card-body">
+            <p><strong>Mã đơn hàng:</strong> @Model.OrderId</p>
+            <p><strong>Số tiền:</strong> @Model.Amount.ToString("N0") VND</p>
+            <p><strong>Mô tả:</strong> @Model.OrderDesc</p>
+
+            <form asp-action="CreatePayment" asp-controller="Payment" method="post">
+                <input type="hidden" name="OrderId" value="@Model.OrderId" />
+                <input type="hidden" name="Amount" value="@Model.Amount" />
+                <input type="hidden" name="OrderDesc" value="@Model.OrderDesc" />
+
+                <button type="submit" class="btn btn-success btn-lg">
+                    <i class="fa fa-wallet"></i> Thanh toán với VNPAY
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet" />
