@@ -16,27 +16,31 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        var userId= HttpContext.Session.GetString("UserId");
-        string username = "Khách";
+        var userId = HttpContext.Session.GetString("UserId");
 
-        if (userId == null)
+        if (string.IsNullOrEmpty(userId))
         {
             ViewBag.UserName = "Khách";
+            ViewBag.Balance = 0m;
+            ViewBag.TrainningPoint = 0;
         }
         else
         {
             var user = _context.Users.FirstOrDefault(u => u.UserId == userId);
             if (user != null)
             {
-                username = user.UserName ?? "Người dùng";
+                ViewBag.UserName = user.UserName ?? "Người dùng";
             }
-            ViewBag.UserName = username;
+            else
+            {
+                ViewBag.UserName = "Khách";
+            }
         }
-        
+
         var events = _context.Events.ToList();
-        
         return View(events);
     }
+
 
     public IActionResult Events(int id)
     {

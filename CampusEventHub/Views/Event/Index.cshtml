@@ -46,6 +46,17 @@
                         <p class="card-text">
                             <span class="badge bg-success">Điểm rèn luyện: @evt.TrainningPoint</span>
                         </p>
+
+                        <p class="card-text">
+                            @if (evt.Price == null || evt.Price == 0)
+                            {
+                                <span class="badge bg-success">Giá ghế: Miễn Phí</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">Giá ghế: @evt.Price</span>
+                            }
+                        </p>
                     </div>
                     <div class="card-footer">
                         <div class="card-footer d-flex gap-2">

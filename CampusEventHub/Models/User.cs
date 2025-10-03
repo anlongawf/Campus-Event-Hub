@@ -12,6 +12,9 @@ public class User
     public string? Password { get; set; }
     
     public int TrainningPoint { get; set; } = 0;
+
+    public Decimal Balance { get; set; } = 0m;
+
     
     public bool isAdmin { get; set; } = false;
     public bool IsVerified  { get; set; } = false;

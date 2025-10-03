@@ -51,32 +51,46 @@ public class EventController : Controller
         return View(evt);
     }
 
-    // Xử lý đặt ghế
     [HttpPost]
     public IActionResult BookSeat(int eventId, int seatId)
     {
         var seat = _context.Seats
+            .Include(s => s.Event) // cần load Event để lấy giá
             .FirstOrDefault(s => s.SeatId == seatId && s.EventId == eventId);
-
+    
         if (seat == null)
-        {
             return Json(new { success = false, message = "Ghế không tồn tại" });
-        }
-        
-        // Xử lí kiểm tra nếu có yêu cầu thanh toán
-        //
-        //
-        
+
+        var userId = HttpContext.Session.GetString("UserId"); 
+
+        if (string.IsNullOrEmpty(userId))
+            return Json(new { success = false, message = "Người dùng chưa đăng nhập" });
+
+        var user = _context.Users.FirstOrDefault(u => u.UserId == userId);
+        if (user == null)
+            return Json(new { success = false, message = "Người dùng không tồn tại" });
+
+        var price = seat.Event?.Price ?? 0;
 
         if (seat.Status != SeatStatus.Available)
-        {
             return Json(new { success = false, message = "Ghế đã được đặt hoặc bị khóa" });
-        }
 
+        if (user.Balance < price)
+            return Json(new { success = false, message = "Số dư không đủ" });
+
+        // Trừ tiền user
+        user.Balance -= price;
+
+        // Set trạng thái ghế
+        seat.UserId = user.UserId;
         seat.Status = SeatStatus.Booked;
-        _context.SaveChanges();
 
-        return Json(new { success = true, message = "Đặt ghế thành công" });
+        _context.SaveChanges();
+        HttpContext.Session.SetString("Balance", user.Balance.ToString());
+        HttpContext.Session.SetString("TrainningPoint", user.TrainningPoint.ToString());
+
+        return Json(new { success = true, message = "Đặt ghế thành công", remainingBalance = user.Balance });
     }
+
     
 }

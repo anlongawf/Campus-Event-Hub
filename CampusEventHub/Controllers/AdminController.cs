@@ -122,6 +122,7 @@ public class AdminController : Controller
                 // Cập nhật các thông tin
                 existing.EventName = model.EventName;
                 existing.Description = model.Description;
+                existing.Price = model.Price;
                 existing.ImageUrl = model.ImageUrl;
                 existing.Location = model.Location;
                 existing.EventDate = model.EventDate;
@@ -157,7 +158,7 @@ public class AdminController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult DeleteEvent(int id)
-    {
+    { 
         try
         {
             var eventItem = _context.Events
@@ -198,7 +199,6 @@ public class AdminController : Controller
         var eventItem = _context.Events
             .Include(e => e.Seats)
             .FirstOrDefault(e => e.EventId == id);
-        
         if (eventItem == null)
         {
             TempData["ErrorMessage"] = "Không tìm thấy sự kiện!";

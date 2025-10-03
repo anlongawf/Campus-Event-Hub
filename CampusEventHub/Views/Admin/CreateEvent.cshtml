@@ -29,6 +29,12 @@
         </div>
 
         <div class="form-group">
+            <label asp-for="Price"></label>
+            <input asp-for="Price" type="text" placeholder="Giá ghế" />
+            <span asp-validation-for="Price" class="validation-error"></span>
+        </div>
+
+        <div class="form-group">
             <label asp-for="EventDate" class="required">Ngày diễn ra</label>
             <input asp-for="EventDate" type="date" />
             <span asp-validation-for="EventDate" class="validation-error"></span>

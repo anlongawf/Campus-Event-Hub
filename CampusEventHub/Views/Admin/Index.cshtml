@@ -94,6 +94,16 @@
                                 <p class="text-muted">Chưa có mô tả cho sự kiện này.</p>
                             }
 
+                            <p class="card-text">
+                                @if (evt.Price == null || evt.Price == 0)
+                                {
+                                    <span class="badge bg-success">Giá ghế: Miễn Phí</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">Giá ghế: @evt.Price</span>
+                                }
+                            </p>
 
                             <div class="mt-auto d-flex flex-wrap gap-2">
                                 <a href="@Url.Action("EditEvent", "Admin", new { id = evt.EventId })"
