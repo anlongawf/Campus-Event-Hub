@@ -1,5 +1,6 @@
 using CampusEventHub.Data;
 using CampusEventHub.Models;
+using CampusEventHub.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -84,6 +85,22 @@ public class EventController : Controller
         // Set trạng thái ghế
         seat.UserId = user.UserId;
         seat.Status = SeatStatus.Booked;
+        
+        string qrUrl = $"http://localhost:5273/QRCheckin/EV{seat.EventId}-U{user.UserId}";
+        string qrCodeBase64 = QRCodeHelper.GenerateQRCodeBase64(qrUrl);
+
+        
+        var checkin = new Checkin
+        {
+            UserId = user.UserId,
+            EventId = seat.EventId,
+            IsApproved = false,
+            PointsAwarded = seat.Event.TrainningPoint,
+            QRCode = qrCodeBase64,
+            CheckinTime = DateTime.Now
+        };
+        
+        _context.Checkins.Add(checkin);
 
         _context.SaveChanges();
         HttpContext.Session.SetString("Balance", user.Balance.ToString());

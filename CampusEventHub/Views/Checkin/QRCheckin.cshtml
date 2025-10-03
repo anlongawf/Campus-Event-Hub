@@ -1,0 +1,56 @@
+@model CampusEventHub.Models.Checkin
+
+@{
+    ViewData["Title"] = "Check-in";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+<div class="container mt-5" style="height: 90vh;">
+    @if (Model == null)
+    {
+        <div class="alert alert-danger text-center">
+            QR code không hợp lệ hoặc check-in không tồn tại.
+        </div>
+    }
+    else
+    {
+        bool isTooEarly = Model.Event.EventDate > DateTime.Now;
+        string statusText;
+        string statusIcon;
+        string badgeClass;
+
+        if (isTooEarly)
+        {
+            statusText = "Chưa tới giờ";
+            statusIcon = "⏳";
+            badgeClass = "bg-warning text-dark";
+        }
+        else if (Model.IsApproved)
+        {
+            statusText = "Check-in thành công";
+            statusIcon = "✅";
+            badgeClass = "bg-success";
+        }
+        else
+        {
+            statusText = "Chờ duyệt";
+            statusIcon = "⏳";
+            badgeClass = "bg-info text-dark";
+        }
+
+        <div class="card mb-3" style="max-width: 450px; margin: auto;">
+            <div class="card-header text-center">
+                <span class="badge @badgeClass">@statusIcon @statusText</span>
+            </div>
+            <div class="card-body">
+                <p><strong>Email:</strong> @Model.User.Email</p>
+                <hr />
+                <p><strong>Sự kiện:</strong> @Model.Event.EventName</p>
+                <p><strong>Ngày sự kiện:</strong> @Model.Event.EventDate.ToString("g")</p>
+                <p><strong>Thời gian check-in:</strong> @Model.CheckinTime.ToString("g")</p>
+                <p><strong>Điểm rèn luyện:</strong> @(Model.IsApproved ? Model.PointsAwarded : 0)</p>
+            </div>
+        </div>
+    }
+</div>

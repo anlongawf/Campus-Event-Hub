@@ -1,0 +1,47 @@
+@model List<CampusEventHub.Models.Checkin>
+
+@{
+    ViewData["Title"] = "Lịch sử Check-in";
+}
+
+<h2 class="mb-4">Lịch sử Check-in</h2>
+
+@if (Model != null && Model.Any())
+{
+    <div class="list-group">
+        @foreach(var checkin in Model)
+        {
+            var isTooEarly = checkin.Event.EventDate > DateTime.Now;
+            <div class="list-group-item list-group-item-action mb-2">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">@checkin.Event.EventName</h5>
+                    <small>@checkin.CheckinTime.ToString("g")</small>
+                </div>
+                <p class="mb-1">
+                    <strong>Người check-in:</strong> @checkin.User.UserName
+                </p>
+                <p class="mb-1">
+                    <strong>Trạng thái:</strong>
+                    @if (isTooEarly)
+                    {
+                        <span class="badge bg-danger">Chưa tới giờ</span>
+                    }
+                    else if (checkin.IsApproved)
+                    {
+                        <span class="badge bg-success">Check-in thành công</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning text-dark">Chờ duyệt</span>
+                    }
+                </p>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        Bạn chưa có check-in nào.
+    </div>
+}

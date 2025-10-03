@@ -1,0 +1,31 @@
+@model List<CampusEventHub.Models.Checkin>
+
+@{
+    ViewData["Title"] = "Lịch sử check-in";
+}
+
+<h2>Lịch sử check-in của tôi</h2>
+
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>Sự kiện</th>
+        <th>Thời gian check-in</th>
+        <th>Điểm nhận được</th>
+        <th>Trạng thái</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach(var checkin in Model)
+    {
+        <tr>
+            <td>@checkin.Event.EventName</td>
+            <td>@checkin.CheckinTime.ToString("g")</td>
+            <td>@(checkin.IsApproved ? checkin.PointsAwarded : 0)</td>
+            <td>@(checkin.IsApproved ? "Đã duyệt" : "Chờ duyệt")</td>
+            <td><img src="@checkin.QRCode" alt="QR code" /></td>
+        </tr>
+    }
+    </tbody>
+
+</table>
