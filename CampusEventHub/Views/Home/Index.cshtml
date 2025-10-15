@@ -12,60 +12,16 @@
                 <h1 class="display-3 fw-bold mb-4 animate-fade-in">
                     Campus Event Hub
                 </h1>
-                <p class="lead mb-4 animate-fade-in-delay">
+                <p class="lead mb-4 animate-fade-in-delay fs-4 fw-bolder">
                     Nơi kết nối các sự kiện học đường, tích lũy điểm rèn luyện và tạo nên những kỷ niệm đáng nhớ
                 </p>
                 <div class="animate-fade-in-delay-2">
-                    <a asp-controller="Event" asp-action="Index" class="btn btn-primary btn-lg me-3">
+                    <a asp-controller="Event" asp-action="Index" class="btn btn-lg me-3 btn-light">
                         <i class="fas fa-calendar-alt"></i> Xem sự kiện
                     </a>
-                    <a href="#about" class="btn btn-outline-light btn-lg">
+                    <a href="#about" class="btn btn-secondary btn-lg">
                         <i class="fas fa-info-circle"></i> Tìm hiểu thêm
                     </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Stats Section -->
-<section class="stats-section py-5">
-    <div class="container">
-        <div class="row text-center">
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="stat-card">
-                    <div class="stat-icon bg-primary">
-                        <i class="fas fa-calendar"></i>
-                    </div>
-                    <h3 class="stat-number">@ViewBag.TotalEvents</h3>
-                    <p class="stat-label">Tổng sự kiện</p>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="stat-card">
-                    <div class="stat-icon bg-success">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <h3 class="stat-number">@ViewBag.UpcomingCount</h3>
-                    <p class="stat-label">Sắp diễn ra</p>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="stat-card">
-                    <div class="stat-icon bg-warning">
-                        <i class="fas fa-chair"></i>
-                    </div>
-                    <h3 class="stat-number">@ViewBag.TotalSeats</h3>
-                    <p class="stat-label">Tổng số ghế</p>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="stat-card">
-                    <div class="stat-icon bg-info">
-                        <i class="fas fa-ticket-alt"></i>
-                    </div>
-                    <h3 class="stat-number">@ViewBag.AvailableSeats</h3>
-                    <p class="stat-label">Ghế còn trống</p>
                 </div>
             </div>
         </div>
@@ -203,37 +159,45 @@
 }
 
 <!-- About Section -->
-<section id="about" class="about-section py-5 bg-light">
+<section id="about" class="about-section py-5" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef);">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-6 mb-4 mb-lg-0">
-                <h2 class="section-title mb-4">Về Campus Event Hub</h2>
-                <p class="lead">
+            <!-- Text Content -->
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <h2 class="section-title mb-4" style="font-weight: 700; color: #0d6efd;">Về Campus Event Hub</h2>
+                <p class="lead text-secondary">
                     Campus Event Hub là nền tảng quản lý và đăng ký sự kiện học đường hàng đầu,
                     giúp sinh viên dễ dàng tham gia các hoạt động và tích lũy điểm rèn luyện.
                 </p>
                 <div class="feature-list mt-4">
-                    <div class="feature-item">
-                        <i class="fas fa-check-circle text-success"></i>
+                    <div class="feature-item d-flex align-items-center mb-3">
+                        <i class="fas fa-check-circle text-success me-2" style="font-size: 1.2rem;"></i>
                         <span>Đăng ký sự kiện dễ dàng và nhanh chóng</span>
                     </div>
-                    <div class="feature-item">
-                        <i class="fas fa-check-circle text-success"></i>
+                    <div class="feature-item d-flex align-items-center mb-3">
+                        <i class="fas fa-check-circle text-success me-2" style="font-size: 1.2rem;"></i>
                         <span>Chọn ghế ngồi theo sở thích</span>
                     </div>
-                    <div class="feature-item">
-                        <i class="fas fa-check-circle text-success"></i>
+                    <div class="feature-item d-flex align-items-center mb-3">
+                        <i class="fas fa-check-circle text-success me-2" style="font-size: 1.2rem;"></i>
                         <span>Tích lũy điểm rèn luyện tự động</span>
                     </div>
-                    <div class="feature-item">
-                        <i class="fas fa-check-circle text-success"></i>
+                    <div class="feature-item d-flex align-items-center mb-3">
+                        <i class="fas fa-check-circle text-success me-2" style="font-size: 1.2rem;"></i>
                         <span>Theo dõi lịch sử tham gia sự kiện</span>
                     </div>
                 </div>
+                <a href="#events" class="btn btn-secondary mt-4">Khám phá sự kiện</a>
             </div>
-            <div class="col-lg-6">
-                <div class="about-image">
-                    <i class="fas fa-users" style="font-size: 250px; color: #0d6efd; opacity: 0.1;"></i>
+
+            <!-- Image / Icon -->
+            <div class="col-lg-6 text-center">
+                <div class="about-image position-relative">
+                    <i class="fas fa-users position-absolute top-50 start-50 translate-middle"
+                       style="font-size: 280px; color: #0d6efd; opacity: 0.08;"></i>
+                    <img src="/img/HoiTruong.jpg"
+                         alt="Campus Events" class="img-fluid rounded shadow-lg" style="position: relative; z-index: 1;">
+                    <span class="mt-4">Hình ảnh sinh viên tại hội trường.</span>
                 </div>
             </div>
         </div>
