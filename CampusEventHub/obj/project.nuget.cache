@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "97rmKXPWuAY=",
+  "dgSpecHash": "cO3MZ7kp7Co=",
   "success": true,
   "projectFilePath": "/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/CampusEventHub.csproj",
   "expectedPackageFiles": [
@@ -96,7 +96,8 @@
     "/Users/anphan/.nuget/packages/system.text.json/9.0.0/system.text.json.9.0.0.nupkg.sha512",
     "/Users/anphan/.nuget/packages/system.threading.channels/7.0.0/system.threading.channels.7.0.0.nupkg.sha512",
     "/Users/anphan/.nuget/packages/system.threading.tasks.extensions/4.5.4/system.threading.tasks.extensions.4.5.4.nupkg.sha512",
-    "/Users/anphan/.nuget/packages/system.windows.extensions/6.0.0/system.windows.extensions.6.0.0.nupkg.sha512"
+    "/Users/anphan/.nuget/packages/system.windows.extensions/6.0.0/system.windows.extensions.6.0.0.nupkg.sha512",
+    "/Users/anphan/.nuget/packages/vnpay.net/8.5.0/vnpay.net.8.5.0.nupkg.sha512"
   ],
   "logs": []
 }
