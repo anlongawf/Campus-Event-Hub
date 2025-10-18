@@ -88,6 +88,26 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGF5bWVudC9JbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/PaymentMvc/Cancel.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGF5bWVudE12Yy9DYW5jZWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/PaymentMvc/Demo.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGF5bWVudE12Yy9EZW1vLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/PaymentMvc/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGF5bWVudE12Yy9JbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/PaymentMvc/Success.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGF5bWVudE12Yy9TdWNjZXNzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/PaymentMvc/TopUp.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGF5bWVudE12Yy9Ub3BVcC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL0Vycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 

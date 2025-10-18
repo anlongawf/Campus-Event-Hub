@@ -1,11 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using CampusEventHub.Helpers;
-using CampusEventHub.Services;
-using VNPAY.NET;
-using VNPAY.NET.Enums;
-using VNPAY.NET.Models;
-using VNPAY.NET.Utilities;
+using CampusEventHub.Service;
+using System.Text.Json;
 
 namespace CampusEventHub.Controllers
 {
@@ -13,66 +9,133 @@ namespace CampusEventHub.Controllers
     [ApiController]
     public class PaymentController : ControllerBase
     {
-        private readonly IVnpay _vnpay;
+        private readonly PayOSService _payOSService;
         private readonly IConfiguration _configuration;
 
-        public PaymentController(IVnpay vnpay, IConfiguration configuration)
+        public PaymentController(PayOSService payOSService, IConfiguration configuration)
         {
-            _vnpay = vnpay;
+            _payOSService = payOSService;
             _configuration = configuration;
-
-            _vnpay.Initialize(
-                _configuration["VnPay:TmnCode"],
-                _configuration["VnPay:HashSecret"],
-                _configuration["VnPay:BaseUrl"],
-                _configuration["VnPay:ReturnUrl"]
-            );
         }
 
         [HttpPost("CreatePaymentUrl")]
-        public ActionResult<string> CreatePaymentUrl([FromBody] PaymentRequestModel model)
+        public async Task<ActionResult<string>> CreatePaymentUrl([FromBody] PaymentRequestModel model)
         {
-            var request = new PaymentRequest
+            try
             {
-                PaymentId = DateTime.Now.Ticks,
-                Money = model.MoneyToPay,
-                Description = model.Description,
-                IpAddress = NetworkHelper.GetIpAddress(HttpContext),
-                BankCode = BankCode.ANY,
-                CreatedDate = DateTime.Now,
-                Currency = Currency.VND,
-                Language = DisplayLanguage.Vietnamese
-            };
+                // Tạo mã đơn hàng duy nhất
+                var orderCode = (int)DateTime.Now.Ticks;
+                
+                // Tạo URL trả về và hủy
+                var baseUrl = _configuration["PayOS:BaseUrl"];
+                var returnUrl = $"{baseUrl}/api/Payment/Return";
+                var cancelUrl = $"{baseUrl}/api/Payment/Cancel";
 
-            var paymentUrl = _vnpay.GetPaymentUrl(request);
-            return Created(paymentUrl, paymentUrl);
+                // Tạo link thanh toán payOS
+                var paymentUrl = await _payOSService.CreatePaymentLinkAsync(
+                    orderCode,
+                    (int)model.MoneyToPay,
+                    model.Description,
+                    returnUrl,
+                    cancelUrl
+                );
+
+                return Ok(new { paymentUrl = paymentUrl, orderCode = orderCode });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Lỗi tạo link thanh toán: {ex.Message}");
+            }
         }
 
-        [HttpGet("Callback")]
-        public ActionResult<string> Callback()
+        [HttpGet("Return")]
+        public async Task<ActionResult<string>> Return()
         {
-            if (Request.QueryString.HasValue)
+            try
             {
-                try
+                var orderCode = Request.Query["orderCode"].FirstOrDefault();
+                var status = Request.Query["status"].FirstOrDefault();
+
+                if (string.IsNullOrEmpty(orderCode))
                 {
-                    var paymentResult = _vnpay.GetPaymentResult(Request.Query);
-                    var resultDescription = $"{paymentResult.PaymentResponse.Description}. {paymentResult.TransactionStatus.Description}.";
-
-                    // In ra console để test
-                    Console.WriteLine(resultDescription);
-
-                    if (paymentResult.IsSuccess)
-                        return Ok($"Thanh toán thành công: {resultDescription}");
-
-                    return BadRequest($"Thanh toán thất bại: {resultDescription}");
+                    return BadRequest("Không tìm thấy mã đơn hàng.");
                 }
-                catch (Exception ex)
+
+                if (status == "PAID")
                 {
-                    return BadRequest($"Lỗi: {ex.Message}");
+                    // Lấy thông tin thanh toán để xác thực
+                    var paymentInfo = await _payOSService.GetPaymentInformationAsync(int.Parse(orderCode));
+                    
+                    if (paymentInfo.Status == "PAID")
+                    {
+                        // Redirect đến trang thành công
+                        return Redirect("/PaymentMvc/Success");
+                    }
                 }
+
+                return Redirect("/PaymentMvc/Cancel");
             }
+            catch (Exception ex)
+            {
+                return BadRequest($"Lỗi xử lý kết quả thanh toán: {ex.Message}");
+            }
+        }
 
-            return NotFound("Không tìm thấy thông tin thanh toán.");
+        [HttpGet("Cancel")]
+        public ActionResult<string> Cancel()
+        {
+            return Redirect("/PaymentMvc/Cancel");
+        }
+
+        [HttpGet("Success")]
+        public ActionResult<string> Success()
+        {
+            return Redirect("/PaymentMvc/Success");
+        }
+
+        [HttpPost("Webhook")]
+        public async Task<ActionResult> Webhook()
+        {
+            try
+            {
+                using var reader = new StreamReader(Request.Body);
+                var body = await reader.ReadToEndAsync();
+                
+                // Lấy signature từ header
+                var signature = Request.Headers["x-payos-signature"].FirstOrDefault();
+                
+                if (string.IsNullOrEmpty(signature))
+                {
+                    return BadRequest("Missing signature");
+                }
+
+                // Xác thực webhook
+                var isValid = await _payOSService.VerifyWebhookAsync(body, signature);
+                
+                if (isValid)
+                {
+                    // Parse webhook data
+                    var webhookData = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(body);
+                    
+                    if (webhookData.TryGetProperty("data", out var data))
+                    {
+                        var orderCode = data.TryGetProperty("orderCode", out var oc) ? oc.GetInt32() : 0;
+                        var status = data.TryGetProperty("status", out var st) ? st.GetString() : "UNKNOWN";
+                        
+                        // Xử lý logic cập nhật trạng thái đơn hàng ở đây
+                        Console.WriteLine($"Webhook verified - Order: {orderCode}, Status: {status}");
+                    }
+                    
+                    return Ok();
+                }
+                
+                return BadRequest("Invalid webhook signature");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Webhook error: {ex.Message}");
+                return BadRequest($"Webhook error: {ex.Message}");
+            }
         }
 
         public class PaymentRequestModel

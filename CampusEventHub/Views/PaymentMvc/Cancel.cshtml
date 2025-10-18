@@ -1,0 +1,246 @@
+@{
+    ViewData["Title"] = "Hủy thanh toán";
+}
+
+<div class="min-vh-100 d-flex align-items-center" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow-lg border-0 text-center" style="border-radius: 20px; overflow: hidden;">
+                    <!-- Cancel Animation -->
+                    <div class="card-body p-5">
+                        <div class="cancel-animation mb-4">
+                            <div class="cancel-icon">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                        
+                        <h2 class="text-warning fw-bold mb-3">Thanh toán đã bị hủy</h2>
+                        <p class="text-muted mb-4">Bạn đã hủy giao dịch thanh toán</p>
+
+                        <!-- Cancel Info -->
+                        <div class="cancel-info mb-4">
+                            <div class="d-flex align-items-center justify-content-center mb-3">
+                                <div class="info-icon me-3">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <h5 class="mb-0 fw-bold text-dark">Giao dịch không hoàn tất</h5>
+                            </div>
+                            
+                            <div class="alert alert-light border-0" style="background: rgba(255, 193, 7, 0.1);">
+                                <p class="mb-0 text-muted">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Không có khoản phí nào được tính. Bạn có thể thử lại bất cứ lúc nào.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-grid gap-3">
+                            <button type="button" class="btn btn-warning btn-lg" onclick="retryPayment()">
+                                <i class="fas fa-redo me-2"></i>
+                                Thử lại thanh toán
+                            </button>
+                            <a href="/Event" class="btn btn-outline-primary">
+                                <i class="fas fa-calendar-alt me-2"></i>
+                                Xem sự kiện khác
+                            </a>
+                            <a href="/" class="btn btn-outline-secondary">
+                                <i class="fas fa-home me-2"></i>
+                                Về trang chủ
+                            </a>
+                        </div>
+
+                        <!-- Support Info -->
+                        <div class="support-info mt-5 pt-4 border-top">
+                            <small class="text-muted">
+                                <i class="fas fa-headset me-1"></i>
+                                Cần hỗ trợ? Liên hệ: <strong>support@campuseventhub.com</strong>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function retryPayment() {
+    // Quay lại trang thanh toán
+    window.history.back();
+}
+</script>
+
+<style>
+.cancel-animation {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.cancel-icon {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: cancelShake 2s ease-in-out infinite;
+    box-shadow: 0 0 30px rgba(255, 193, 7, 0.3);
+}
+
+.cancel-icon i {
+    font-size: 3rem;
+    color: white;
+    animation: cancelX 0.6s ease-in-out;
+}
+
+@@keyframes cancelShake {
+    0%, 100% {
+        transform: translateX(0);
+        box-shadow: 0 0 30px rgba(255, 193, 7, 0.3);
+    }
+    25% {
+        transform: translateX(-5px);
+        box-shadow: 0 0 35px rgba(255, 193, 7, 0.4);
+    }
+    75% {
+        transform: translateX(5px);
+        box-shadow: 0 0 35px rgba(255, 193, 7, 0.4);
+    }
+}
+
+@@keyframes cancelX {
+    0% {
+        transform: scale(0) rotate(0deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2) rotate(180deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) rotate(360deg);
+        opacity: 1;
+    }
+}
+
+.info-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.btn-lg {
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    border: none;
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+}
+
+.btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 193, 7, 0.4);
+    color: white;
+}
+
+.btn-outline-primary {
+    border: 2px solid #007bff;
+    color: #007bff;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background: #007bff;
+    border-color: #007bff;
+    transform: translateY(-2px);
+}
+
+.btn-outline-secondary {
+    border: 2px solid #6c757d;
+    color: #6c757d;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-secondary:hover {
+    background: #6c757d;
+    border-color: #6c757d;
+    transform: translateY(-2px);
+}
+
+.card {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+    animation: slideInUp 0.6s ease-out;
+}
+
+@@keyframes slideInUp {
+    0% {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.support-info {
+    background: rgba(248, 249, 250, 0.8);
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+.alert-light {
+    border-radius: 10px;
+}
+
+@@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .card-body {
+        padding: 3rem 2rem;
+    }
+    
+    .cancel-icon {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .cancel-icon i {
+        font-size: 2.5rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+}
+</style>
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

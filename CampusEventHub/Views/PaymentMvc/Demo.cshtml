@@ -1,0 +1,202 @@
+@{
+    ViewData["Title"] = "Demo payOS Integration";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-gradient-primary text-white text-center py-4">
+                    <h2 class="mb-0">
+                        <i class="fas fa-flask me-3"></i>
+                        Demo tích hợp payOS
+                    </h2>
+                    <p class="mb-0 opacity-75">Test các tính năng thanh toán</p>
+                </div>
+                
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <!-- Nạp tiền -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center">
+                                    <div class="text-primary mb-3">
+                                        <i class="fas fa-wallet fa-3x"></i>
+                                    </div>
+                                    <h5 class="card-title">Nạp tiền vào ví</h5>
+                                    <p class="card-text text-muted">
+                                        Chọn số tiền và nạp vào ví của bạn
+                                    </p>
+                                    <a href="/PaymentMvc/TopUp" class="btn btn-primary">
+                                        <i class="fas fa-arrow-right me-2"></i>
+                                        Thử ngay
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thanh toán đơn hàng -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center">
+                                    <div class="text-success mb-3">
+                                        <i class="fas fa-shopping-cart fa-3x"></i>
+                                    </div>
+                                    <h5 class="card-title">Thanh toán đơn hàng</h5>
+                                    <p class="card-text text-muted">
+                                        Test thanh toán cho một đơn hàng mẫu
+                                    </p>
+                                    <a href="/PaymentMvc/Index" class="btn btn-success">
+                                        <i class="fas fa-arrow-right me-2"></i>
+                                        Thử ngay
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Test API -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center">
+                                    <div class="text-info mb-3">
+                                        <i class="fas fa-code fa-3x"></i>
+                                    </div>
+                                    <h5 class="card-title">Test API</h5>
+                                    <p class="card-text text-muted">
+                                        Kiểm tra các API endpoints
+                                    </p>
+                                    <button class="btn btn-info" onclick="testAPI()">
+                                        <i class="fas fa-play me-2"></i>
+                                        Test API
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Thông tin cấu hình -->
+                    <div class="mt-5">
+                        <h4 class="mb-3">
+                            <i class="fas fa-cog me-2"></i>
+                            Thông tin cấu hình
+                        </h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="alert alert-info border-0">
+                                    <h6 class="alert-heading">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        API Endpoints
+                                    </h6>
+                                    <ul class="mb-0">
+                                        <li><code>POST /api/Payment/CreatePaymentUrl</code></li>
+                                        <li><code>GET /api/Payment/Return</code></li>
+                                        <li><code>GET /api/Payment/Cancel</code></li>
+                                        <li><code>POST /api/Payment/Webhook</code></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="alert alert-warning border-0">
+                                    <h6 class="alert-heading">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        Lưu ý
+                                    </h6>
+                                    <ul class="mb-0">
+                                        <li>Cần cấu hình PayOS credentials</li>
+                                        <li>Đảm bảo HTTPS trong production</li>
+                                        <li>Kiểm tra webhook URL</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Test Results -->
+                    <div class="mt-4" id="testResults" style="display: none;">
+                        <h5 class="mb-3">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Kết quả test
+                        </h5>
+                        <div class="alert alert-success border-0">
+                            <pre id="testOutput" class="mb-0"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function testAPI() {
+    const testResults = document.getElementById('testResults');
+    const testOutput = document.getElementById('testOutput');
+    
+    testResults.style.display = 'block';
+    testOutput.textContent = 'Đang test API...';
+    
+    try {
+        // Test tạo payment URL
+        const response = await fetch('/api/Payment/CreatePaymentUrl', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                MoneyToPay: 100000,
+                Description: 'Test API - Demo payOS Integration'
+            })
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            testOutput.textContent = `✅ API Test thành công!\n\nResponse:\n${JSON.stringify(result, null, 2)}`;
+        } else {
+            const errorText = await response.text();
+            testOutput.textContent = `❌ API Test thất bại!\n\nError: ${errorText}`;
+        }
+    } catch (error) {
+        testOutput.textContent = `❌ Lỗi kết nối!\n\nError: ${error.message}`;
+    }
+}
+</script>
+
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.card {
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+pre {
+    background: rgba(0,0,0,0.05);
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+@@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+}
+</style>
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

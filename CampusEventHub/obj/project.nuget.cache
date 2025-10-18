@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "cO3MZ7kp7Co=",
+  "dgSpecHash": "/ICdTZ86YP8=",
   "success": true,
   "projectFilePath": "/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/CampusEventHub.csproj",
   "expectedPackageFiles": [
@@ -60,6 +60,9 @@
     "/Users/anphan/.nuget/packages/microsoft.win32.registry/4.5.0/microsoft.win32.registry.4.5.0.nupkg.sha512",
     "/Users/anphan/.nuget/packages/microsoft.win32.systemevents/9.0.9/microsoft.win32.systemevents.9.0.9.nupkg.sha512",
     "/Users/anphan/.nuget/packages/mono.texttemplating/3.0.0/mono.texttemplating.3.0.0.nupkg.sha512",
+    "/Users/anphan/.nuget/packages/newtonsoft.json/13.0.3/newtonsoft.json.13.0.3.nupkg.sha512",
+    "/Users/anphan/.nuget/packages/payos.lib.be/1.0.9/payos.lib.be.1.0.9.nupkg.sha512",
+    "/Users/anphan/.nuget/packages/payos.net5/1.0.7/payos.net5.1.0.7.nupkg.sha512",
     "/Users/anphan/.nuget/packages/qrcoder/1.6.0/qrcoder.1.6.0.nupkg.sha512",
     "/Users/anphan/.nuget/packages/system.clientmodel/1.0.0/system.clientmodel.1.0.0.nupkg.sha512",
     "/Users/anphan/.nuget/packages/system.codedom/6.0.0/system.codedom.6.0.0.nupkg.sha512",

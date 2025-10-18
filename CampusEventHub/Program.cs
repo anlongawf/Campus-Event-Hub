@@ -12,6 +12,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<SeatService>();
 builder.Services.AddScoped<MailService>();
+builder.Services.AddHttpClient<PayOSService>();
 
 builder.Services.AddScoped<IVnpay, Vnpay>();
 

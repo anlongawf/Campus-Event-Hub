@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CampusEventHub.Views.Payment;
+namespace CampusEventHub.Views.PaymentMvc;
 
-public class Index : PageModel
+public class TopUp : PageModel
 {
     public void OnGet()
     {

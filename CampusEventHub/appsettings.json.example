@@ -10,9 +10,9 @@
     "CampusEventHub": "Server=localhost;Database=CampusEventHub;User Id=sa;Password=TuilaAn@;MultipleActiveResultSets=true;TrustServerCertificate=true"
   },
   "PayOS": {
-    "ClientId": "0375931d-8094-4214-8d7b-7d0bfeae23fd",
-    "ApiKey": "c56e5165-216b-4553-b8d9-bd8c00b30d4d", 
-    "ChecksumKey": "8c1788db652418abd8795c5b7a345d36d9f234c548f19a34edeeec843c5b7196",
-    "BaseUrl": "https://0012cd26b3a5.ngrok-free.app"
+    "ClientId": "YOUR_PAYOS_CLIENT_ID",
+    "ApiKey": "YOUR_PAYOS_API_KEY", 
+    "ChecksumKey": "YOUR_PAYOS_CHECKSUM_KEY",
+    "BaseUrl": "https://your-domain.com"
   }
 }

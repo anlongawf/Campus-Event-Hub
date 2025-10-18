@@ -62,6 +62,10 @@
               "target": "Package",
               "version": "[9.0.0, )"
             },
+            "PayOS.Lib.Be": {
+              "target": "Package",
+              "version": "[1.0.9, )"
+            },
             "QRCoder": {
               "target": "Package",
               "version": "[1.6.0, )"
@@ -73,6 +77,10 @@
             "VNPAY.NET": {
               "target": "Package",
               "version": "[8.5.0, )"
+            },
+            "payOS.Net5": {
+              "target": "Package",
+              "version": "[1.0.7, )"
             }
           },
           "imports": [
