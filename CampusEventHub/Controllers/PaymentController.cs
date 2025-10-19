@@ -24,7 +24,8 @@ namespace CampusEventHub.Controllers
             try
             {
                 // Tạo mã đơn hàng duy nhất
-                var orderCode = (int)DateTime.Now.Ticks;
+                var random = new Random();
+                var orderCode = random.Next(100000, 999999);
                 
                 // Tạo URL trả về và hủy
                 var baseUrl = _configuration["PayOS:BaseUrl"];
@@ -44,7 +45,7 @@ namespace CampusEventHub.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"Lỗi tạo link thanh toán: {ex.Message}");
+                return BadRequest(new { error = $"Lỗi tạo link thanh toán: {ex.Message}" });
             }
         }
 
@@ -58,7 +59,7 @@ namespace CampusEventHub.Controllers
 
                 if (string.IsNullOrEmpty(orderCode))
                 {
-                    return BadRequest("Không tìm thấy mã đơn hàng.");
+                    return BadRequest(new { error = "Không tìm thấy mã đơn hàng." });
                 }
 
                 if (status == "PAID")
@@ -77,7 +78,7 @@ namespace CampusEventHub.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"Lỗi xử lý kết quả thanh toán: {ex.Message}");
+                return BadRequest(new { error = $"Lỗi xử lý kết quả thanh toán: {ex.Message}" });
             }
         }
 
@@ -106,7 +107,7 @@ namespace CampusEventHub.Controllers
                 
                 if (string.IsNullOrEmpty(signature))
                 {
-                    return BadRequest("Missing signature");
+                    return BadRequest(new { error = "Missing signature" });
                 }
 
                 // Xác thực webhook
@@ -126,15 +127,15 @@ namespace CampusEventHub.Controllers
                         Console.WriteLine($"Webhook verified - Order: {orderCode}, Status: {status}");
                     }
                     
-                    return Ok();
+                    return Ok(new { message = "Webhook processed successfully" });
                 }
                 
-                return BadRequest("Invalid webhook signature");
+                return BadRequest(new { error = "Invalid webhook signature" });
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Webhook error: {ex.Message}");
-                return BadRequest($"Webhook error: {ex.Message}");
+                return BadRequest(new { error = $"Webhook error: {ex.Message}" });
             }
         }
 
