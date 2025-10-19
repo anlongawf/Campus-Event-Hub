@@ -21,4 +21,8 @@
       <PackageReference Include="VNPAY.NET" Version="8.5.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\Payment\Index.cshtml" />
+    </ItemGroup>
+
 </Project>

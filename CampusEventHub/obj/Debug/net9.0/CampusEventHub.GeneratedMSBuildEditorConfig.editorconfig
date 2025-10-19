@@ -17,121 +17,121 @@ build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = CampusEventHub
 build_property.RootNamespace = CampusEventHub
-build_property.ProjectDir = /Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/
+build_property.ProjectDir = /Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 9.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = /Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub
+build_property.MSBuildProjectDirectory = /Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 9.0
 build_property.EnableCodeStyleSeverity = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Admin/CreateEvent.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/Admin/CreateEvent.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWRtaW4vQ3JlYXRlRXZlbnQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Admin/EditEvent.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/Admin/EditEvent.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWRtaW4vRWRpdEV2ZW50LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Admin/Index.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/Admin/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWRtaW4vSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Auth/Login.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/Auth/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQXV0aC9Mb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Auth/Register.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/Auth/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQXV0aC9SZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Auth/VerifyCode.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/Auth/VerifyCode.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQXV0aC9WZXJpZnlDb2RlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Checkin/Index.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/Checkin/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2hlY2tpbi9JbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Checkin/MyCheckins.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/Checkin/MyCheckins.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2hlY2tpbi9NeUNoZWNraW5zLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Checkin/QRCheckin.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/Checkin/QRCheckin.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2hlY2tpbi9RUkNoZWNraW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Event/Details.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/Event/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRXZlbnQvRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Event/Index.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/Event/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRXZlbnQvSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Event/SelectSeat.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/Event/SelectSeat.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRXZlbnQvU2VsZWN0U2VhdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Home/Index.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9JbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Home/Privacy.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9Qcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Payment/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGF5bWVudC9JbmRleC5jc2h0bWw=
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/Home/Profile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9Qcm9maWxlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/PaymentMvc/Cancel.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/PaymentMvc/Cancel.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGF5bWVudE12Yy9DYW5jZWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/PaymentMvc/Demo.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/PaymentMvc/Demo.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGF5bWVudE12Yy9EZW1vLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/PaymentMvc/Index.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/PaymentMvc/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGF5bWVudE12Yy9JbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/PaymentMvc/Success.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/PaymentMvc/Success.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGF5bWVudE12Yy9TdWNjZXNzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/PaymentMvc/TopUp.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/PaymentMvc/TopUp.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGF5bWVudE12Yy9Ub3BVcC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Shared/Error.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL0Vycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Shared/_Footer.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/Shared/_Footer.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19Gb290ZXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Shared/_Header.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/Shared/_Header.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19IZWFkZXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Shared/_ValidationScriptsPartial.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/_ViewImports.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/_ViewStart.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/Views/Shared/_Layout.cshtml]
+[/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-frddj8ne8x

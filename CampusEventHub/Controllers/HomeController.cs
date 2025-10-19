@@ -59,6 +59,31 @@ public class HomeController : Controller
         return View();
     }
     
+    public IActionResult Profile()
+    {
+        var userId = HttpContext.Session.GetString("UserId");
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            TempData["Error"] = "Vui lòng đăng nhập để xem thông tin cá nhân.";
+            return RedirectToAction("Login", "Auth"); 
+        }
+
+        var user = _context.Users.FirstOrDefault(u => u.UserId == userId);
+
+        if (user == null)
+        {
+            TempData["Error"] = "Không tìm thấy thông tin người dùng.";
+            return RedirectToAction("Login", "Auth");
+        }
+
+        ViewBag.Message = user.TrainningPoint >= 100
+            ? "🎉 Chúc mừng! Bạn đã đạt đủ 100 điểm rèn luyện."
+            : $"📈 Bạn cần thêm {100 - user.TrainningPoint} điểm nữa để đạt 100 điểm.";
+
+        return View(user);
+    }
+    
     public IActionResult Auth()
     {
         return View();

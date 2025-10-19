@@ -5429,11 +5429,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/CampusEventHub.csproj",
+      "projectUniqueName": "/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/CampusEventHub.csproj",
       "projectName": "CampusEventHub",
-      "projectPath": "/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/CampusEventHub.csproj",
+      "projectPath": "/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/CampusEventHub.csproj",
       "packagesPath": "/Users/anphan/.nuget/packages/",
-      "outputPath": "/Users/anphan/Desktop/Study/ASPY/BTL/CampusEventHub/obj/",
+      "outputPath": "/Users/anphan/Desktop/Study/ASPY/Campus-Event-Hub/CampusEventHub/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/anphan/.nuget/NuGet/NuGet.Config"
