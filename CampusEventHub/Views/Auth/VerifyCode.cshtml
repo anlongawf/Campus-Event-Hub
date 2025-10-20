@@ -17,14 +17,24 @@
     <title>Verify Email</title>
 </head>
 <body>
-<div>
-    <form action="VerifyCode" method="post">
-        <label for="">Email:</label>
-        <input asp-for="Email"/>
-        <label for="">Code:</label>
-        <input asp-for="Code"/>
-        <button type="submit">Verify</button>
-    </form> 
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-lg p-4" style="width: 400px;">
+        <h3 class="text-center mb-4 text-primary">Verify Email</h3>
+
+        <form asp-action="VerifyCode" method="post">
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">Email</label>
+                <input asp-for="Email" class="form-control" placeholder="Enter your email" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Code" class="form-label">Verification Code</label>
+                <input asp-for="Code" class="form-control" placeholder="Enter the code" />
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Verify</button>
+        </form>
+    </div>
 </div>
 </body>
 </html>

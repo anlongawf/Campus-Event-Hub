@@ -4,28 +4,60 @@
     ViewData["Title"] = "Lịch sử check-in";
 }
 
-<h2>Lịch sử check-in của tôi</h2>
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white d-flex align-items-center">
+            <i class="bi bi-clock-history me-2"></i>
+            <h4 class="mb-0">Lịch sử check-in của tôi</h4>
+        </div>
 
-<table class="table table-bordered">
-    <thead>
-    <tr>
-        <th>Sự kiện</th>
-        <th>Thời gian check-in</th>
-        <th>Điểm nhận được</th>
-        <th>Trạng thái</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach(var checkin in Model)
-    {
-        <tr>
-            <td>@checkin.Event.EventName</td>
-            <td>@checkin.CheckinTime.ToString("g")</td>
-            <td>@(checkin.IsApproved ? checkin.PointsAwarded : 0)</td>
-            <td>@(checkin.IsApproved ? "Đã duyệt" : "Chờ duyệt")</td>
-            <td><img src="@checkin.QRCode" alt="QR code" /></td>
-        </tr>
-    }
-    </tbody>
+        <div class="card-body">
+            @if (Model == null || !Model.Any())
+            {
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-info-circle"></i> Bạn chưa có lịch sử check-in nào.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Sự kiện</th>
+                                <th>Thời gian check-in</th>
+                                <th>Điểm nhận được</th>
+                                <th>Trạng thái</th>
+                                <th>Mã QR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var checkin in Model)
+                            {
+                                <tr>
+                                    <td>@checkin.Event.EventName</td>
+                                    <td>@checkin.CheckinTime.ToString("g")</td>
+                                    <td>@(checkin.IsApproved ? checkin.PointsAwarded : 0)</td>
+                                    <td>
+                                        @if (checkin.IsApproved)
+                                        {
+                                            <span class="badge bg-success">Đã duyệt</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning text-dark">Chờ duyệt</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <img src="@checkin.QRCode" alt="QR Code" class="img-thumbnail" style="max-width: 80px;" />
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
 
-</table>

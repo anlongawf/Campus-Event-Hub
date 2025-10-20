@@ -5,6 +5,7 @@ using System.Text.Json;
 using CampusEventHub.Data;
 using CampusEventHub.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace CampusEventHub.Controllers
 {
@@ -30,6 +31,11 @@ namespace CampusEventHub.Controllers
             {
                 var random = new Random();
                 var orderCode = random.Next(100000, 999999);
+                var userId = HttpContext.Session.GetString("UserId");
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized("Người dùng chưa đăng nhập (session không tồn tại)");
+                }
         
                 var baseUrl = _configuration["PayOS:BaseUrl"];
                 var returnUrl = $"{baseUrl}/api/Payment/Return";
@@ -39,7 +45,7 @@ namespace CampusEventHub.Controllers
                 var paymentOrder = new PaymentOrder
                 {
                     OrderCode = orderCode,
-                    UserId = User.Identity?.Name, // Lấy UserId từ phiên đăng nhập
+                    UserId = userId,
                     Amount = (decimal)model.MoneyToPay,
                     Status = "PENDING",
                     CreatedAt = DateTime.Now
