@@ -12,4 +12,5 @@ public class ApplicationDbContext : DbContext
     public DbSet<Seat> Seats { get; set; }
     public DbSet<Event> Events { get; set; }
     public DbSet<Checkin> Checkins { get; set; }
+    public DbSet<PaymentOrder> PaymentOrders { get; set; } 
 }

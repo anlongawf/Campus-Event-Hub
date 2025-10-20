@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using CampusEventHub.Service;
 using System.Text.Json;
+using CampusEventHub.Data;
+using CampusEventHub.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CampusEventHub.Controllers
 {
@@ -11,28 +14,39 @@ namespace CampusEventHub.Controllers
     {
         private readonly PayOSService _payOSService;
         private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _context;
 
-        public PaymentController(PayOSService payOSService, IConfiguration configuration)
+        public PaymentController(PayOSService payOSService, IConfiguration configuration, ApplicationDbContext context)
         {
             _payOSService = payOSService;
             _configuration = configuration;
+            _context = context;
         }
-
+        
         [HttpPost("CreatePaymentUrl")]
         public async Task<ActionResult<string>> CreatePaymentUrl([FromBody] PaymentRequestModel model)
         {
             try
             {
-                // Tạo mã đơn hàng duy nhất
                 var random = new Random();
                 var orderCode = random.Next(100000, 999999);
-                
-                // Tạo URL trả về và hủy
+        
                 var baseUrl = _configuration["PayOS:BaseUrl"];
                 var returnUrl = $"{baseUrl}/api/Payment/Return";
                 var cancelUrl = $"{baseUrl}/api/Payment/Cancel";
 
-                // Tạo link thanh toán payOS
+                // Lưu thông tin đơn hàng
+                var paymentOrder = new PaymentOrder
+                {
+                    OrderCode = orderCode,
+                    UserId = User.Identity?.Name, // Lấy UserId từ phiên đăng nhập
+                    Amount = (decimal)model.MoneyToPay,
+                    Status = "PENDING",
+                    CreatedAt = DateTime.Now
+                };
+                _context.PaymentOrders.Add(paymentOrder);
+                await _context.SaveChangesAsync();
+
                 var paymentUrl = await _payOSService.CreatePaymentLinkAsync(
                     orderCode,
                     (int)model.MoneyToPay,
@@ -69,6 +83,19 @@ namespace CampusEventHub.Controllers
                     
                     if (paymentInfo.Status == "PAID")
                     {
+                        // Lấy thông tin người dùng (giả sử bạn có cách xác định UserId, ví dụ từ phiên đăng nhập)
+                        var userId = User.Identity?.Name; // Hoặc lấy từ session, token, v.v.
+                        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+
+                        if (user == null)
+                        {
+                            return BadRequest(new { error = "Không tìm thấy người dùng." });
+                        }
+
+                        // Cập nhật Balance
+                        user.Balance += paymentInfo.Amount; // Cộng số tiền thanh toán vào Balance
+                        await _context.SaveChangesAsync();
+
                         // Redirect đến trang thành công
                         return Redirect("/PaymentMvc/Success");
                     }
@@ -93,51 +120,69 @@ namespace CampusEventHub.Controllers
         {
             return Redirect("/PaymentMvc/Success");
         }
-
+            
         [HttpPost("Webhook")]
-        public async Task<ActionResult> Webhook()
+public async Task<ActionResult> Webhook()
+{
+    try
+    {
+        using var reader = new StreamReader(Request.Body);
+        var body = await reader.ReadToEndAsync();
+        
+        var signature = Request.Headers["x-payos-signature"].FirstOrDefault();
+        
+        if (string.IsNullOrEmpty(signature))
         {
-            try
+            return BadRequest(new { error = "Missing signature" });
+        }
+
+        var isValid = await _payOSService.VerifyWebhookAsync(body, signature);
+        
+        if (isValid)
+        {
+            var webhookData = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(body);
+            
+            if (webhookData.TryGetProperty("data", out var data))
             {
-                using var reader = new StreamReader(Request.Body);
-                var body = await reader.ReadToEndAsync();
-                
-                // Lấy signature từ header
-                var signature = Request.Headers["x-payos-signature"].FirstOrDefault();
-                
-                if (string.IsNullOrEmpty(signature))
+                var orderCode = data.TryGetProperty("orderCode", out var oc) ? oc.GetInt32() : 0;
+                var status = data.TryGetProperty("status", out var st) ? st.GetString() : "UNKNOWN";
+                var amount = data.TryGetProperty("amount", out var amt) ? amt.GetInt32() : 0;
+
+                var paymentOrder = await _context.PaymentOrders
+                    .FirstOrDefaultAsync(po => po.OrderCode == orderCode);
+
+                if (paymentOrder == null)
                 {
-                    return BadRequest(new { error = "Missing signature" });
+                    return BadRequest(new { error = "Không tìm thấy đơn hàng." });
                 }
 
-                // Xác thực webhook
-                var isValid = await _payOSService.VerifyWebhookAsync(body, signature);
-                
-                if (isValid)
+                if (status == "PAID" && paymentOrder.Status != "PAID")
                 {
-                    // Parse webhook data
-                    var webhookData = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(body);
-                    
-                    if (webhookData.TryGetProperty("data", out var data))
+                    var user = await _context.Users
+                        .FirstOrDefaultAsync(u => u.UserId == paymentOrder.UserId);
+
+                    if (user != null)
                     {
-                        var orderCode = data.TryGetProperty("orderCode", out var oc) ? oc.GetInt32() : 0;
-                        var status = data.TryGetProperty("status", out var st) ? st.GetString() : "UNKNOWN";
-                        
-                        // Xử lý logic cập nhật trạng thái đơn hàng ở đây
-                        Console.WriteLine($"Webhook verified - Order: {orderCode}, Status: {status}");
+                        user.Balance += paymentOrder.Amount;
+                        paymentOrder.Status = "PAID";
+                        await _context.SaveChangesAsync();
                     }
-                    
-                    return Ok(new { message = "Webhook processed successfully" });
                 }
                 
-                return BadRequest(new { error = "Invalid webhook signature" });
+                Console.WriteLine($"Webhook verified - Order: {orderCode}, Status: {status}");
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Webhook error: {ex.Message}");
-                return BadRequest(new { error = $"Webhook error: {ex.Message}" });
-            }
+            
+            return Ok(new { message = "Webhook processed successfully" });
         }
+        
+        return BadRequest(new { error = "Invalid webhook signature" });
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Webhook error: {ex.Message}");
+        return BadRequest(new { error = $"Webhook error: {ex.Message}" });
+    }
+}
 
         public class PaymentRequestModel
         {
