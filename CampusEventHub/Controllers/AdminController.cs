@@ -21,12 +21,12 @@ public class AdminController : Controller
     [HttpGet]
     public IActionResult Index()
     {
-        // var userId = HttpContext.Session.GetString("UserId");
-        // var user = _context.Users.Find(userId);
-        // if (user == null || !user.isAdmin)
-        // {
-        //     return RedirectToAction("Index", "Home");
-        // }
+        var userId = HttpContext.Session.GetString("UserId");
+        var user = _context.Users.Find(userId);
+        if (user == null || !user.isAdmin)
+        {
+            return RedirectToAction("Index", "Home");
+        }
         
         var events = _context.Events
             .Include(e => e.Seats)

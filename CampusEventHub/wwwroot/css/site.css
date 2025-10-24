@@ -1,5 +1,22 @@
-html {
+
+html, body {
+  height: 100%;
+  margin: 0;
   font-size: 14px;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+}
+
+.main-content {
+  flex: 1; /* phần nội dung chính chiếm không gian còn lại */
 }
 
 @media (min-width: 768px) {

@@ -86,7 +86,7 @@ public class EventController : Controller
         seat.UserId = user.UserId;
         seat.Status = SeatStatus.Booked;
         
-        string qrUrl = $"http://localhost:5273/QRCheckin/EV{seat.EventId}-U{user.UserId}";
+        string qrUrl = $"http://connect.mineclubvn.com:3001//QRCheckin/EV{seat.EventId}-U{user.UserId}";
         string qrCodeBase64 = QRCodeHelper.GenerateQRCodeBase64(qrUrl);
 
         

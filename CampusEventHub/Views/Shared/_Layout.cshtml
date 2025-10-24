@@ -15,21 +15,19 @@
     <link rel="stylesheet" href="~/css/payos.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/CampusEventHub.styles.css" asp-append-version="true" />
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 <!-- Header -->
 <header>
     @await Html.PartialAsync("_Header")
 </header>
 
 <!-- Nội dung chính -->
-<div class="container">
-    <main role="main" class="pb-3">
-        @RenderBody()
-    </main>
-</div>
+<main role="main" class="flex-fill container pb-3">
+    @RenderBody()
+</main>
 
 <!-- Footer -->
-<footer>
+<footer class="mt-auto">
     @await Html.PartialAsync("_Footer")
 </footer>
 
@@ -39,4 +37,5 @@
 <script src="~/js/site.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>
